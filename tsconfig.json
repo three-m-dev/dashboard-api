@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6", // Target latest ECMAScript standard
+    "module": "Node16", // Specify module code generation
+    "outDir": "./dist", // Output directory
+    "rootDir": "./src", // Source directory
+    "strict": true, // Enable strict type checking
+    "esModuleInterop": true, // Enable compatibility with Babel's handling of default imports
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Avoid using files with the same name but different casing
+    "moduleResolution": "Node16", // Follow Node.js module resolution rules
+    "resolveJsonModule": true // Allow JSON imports
+    // Import JS APIs
+  },
+  "include": [
+    "src/**/*.ts" // Include all TypeScript files in src folder
+  ],
+  "exclude": [
+    "node_modules" // Exclude node_modules
+  ]
+}
