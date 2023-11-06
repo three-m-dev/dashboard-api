@@ -13,7 +13,7 @@ DB_DEVELOPMENT_PASSWORD=yourpassword
 DB_DEVELOPMENT_DATABASE=mydatabase
 DB_DEVELOPMENT_DIALECT=mysql
 
-# Development Database Credentials
+# Production Database Credentials
 
 DB_PRODUCTION_HOST=localhost
 DB_PRODUCTION_USERNAME=root
