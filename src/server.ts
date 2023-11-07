@@ -49,7 +49,7 @@ router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-router.use("/users", userRoutes);
+router.use("/api/v1/users", userRoutes);
 
 const app = http.createServer(router);
 
