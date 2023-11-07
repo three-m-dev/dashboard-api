@@ -10,23 +10,24 @@ type Config = {
 };
 
 const development: Config = {
-  username: process.env.DB_DEVELOPMENT_USERNAME || "",
-  password: process.env.DB_DEVELOPMENT_PASSWORD || "",
-  database: process.env.DB_DEVELOPMENT_DATABASE || "",
-  host: process.env.DB_DEVELOPMENT_HOST || "",
-  dialect: process.env.DB_DEVELOPMENT_DIALECT || "mysql",
+  username: process.env.DB_DEVELOPMENT_USERNAME!,
+  password: process.env.DB_DEVELOPMENT_PASSWORD!,
+  database: process.env.DB_DEVELOPMENT_DATABASE!,
+  host: process.env.DB_DEVELOPMENT_HOST!,
+  dialect: process.env.DB_DEVELOPMENT_DIALECT!,
 };
 
 const production: Config = {
-  username: process.env.DB_PRODUCTION_USERNAME || "",
-  password: process.env.DB_PRODUCTION_PASSWORD || "",
-  database: process.env.DB_PRODUCTION_DATABASE || "",
-  host: process.env.DB_PRODUCTION_HOST || "",
-  dialect: process.env.DB_PRODUCTION_DIALECT || "mysql",
+  username: process.env.DB_PRODUCTION_USERNAME!,
+  password: process.env.DB_PRODUCTION_PASSWORD!,
+  database: process.env.DB_PRODUCTION_DATABASE!,
+  host: process.env.DB_PRODUCTION_HOST!,
+  dialect: process.env.DB_PRODUCTION_DIALECT!,
 };
 
-const env: "development" | "production" = (process.env.NODE_ENV ||
-  "development") as "development" | "production";
+const env: "development" | "production" = (process.env.NODE_ENV || "development") as
+  | "development"
+  | "production";
 
 const config = { development, production };
 
