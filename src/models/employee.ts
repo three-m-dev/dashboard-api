@@ -1,6 +1,12 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
 
-export interface IAddress {}
+export interface IAddress {
+  addressLine?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+}
 
 export interface IEmployee {
   employeeId: string;
@@ -10,11 +16,7 @@ export interface IEmployee {
   lastName: string;
   email: string;
   phoneNumber?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postalCode?: string;
+  address: IAddress;
   dateOfBirth?: Date;
   hireDate: Date;
   role: string;
@@ -34,11 +36,7 @@ export class Employee extends Model<IEmployee> implements IEmployee {
   public lastName!: string;
   public email!: string;
   public phoneNumber?: string;
-  public address?: string;
-  public city?: string;
-  public state?: string;
-  public country?: string;
-  public postalCode?: string;
+  public address!: IAddress;
   public dateOfBirth?: Date;
   public hireDate!: Date;
   public role!: string;
@@ -83,23 +81,7 @@ export class Employee extends Model<IEmployee> implements IEmployee {
           allowNull: true,
         },
         address: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        city: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        state: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        country: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        postalCode: {
-          type: DataTypes.STRING,
+          type: DataTypes.JSON,
           allowNull: true,
         },
         dateOfBirth: {
