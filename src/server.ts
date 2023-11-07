@@ -6,6 +6,7 @@ import compression from "compression";
 import cors from "cors";
 import logging from "./config/logging";
 import db from "./models/index";
+import userRoutes from "./routes/userRoutes";
 
 const NAMESPACE = "Server";
 const router = express();
@@ -47,6 +48,8 @@ router.use(compression());
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
+
+router.use("/users", userRoutes);
 
 const app = http.createServer(router);
 
