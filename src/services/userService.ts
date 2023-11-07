@@ -5,6 +5,13 @@ import bcrypt from "bcryptjs";
 
 export class UserService {
   static async createUser(userData: IUser): Promise<{ username: string; accountType: string }> {
+    const requiredFields = ["username", "password", "accountType"] as const;
+
+    const missingField = requiredFields.find((field) => !userData[field]);
+    if (missingField) {
+      throw new Error(`Missing required field: ${missingField}`);
+    }
+
     const existingUser = await User.findOne({
       where: { username: userData.username },
     });
