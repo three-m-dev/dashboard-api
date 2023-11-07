@@ -42,10 +42,12 @@ export class User extends Model<IUser> implements IUser {
         },
         isActive: {
           type: DataTypes.BOOLEAN,
+          defaultValue: true,
           allowNull: false,
         },
         createdBy: {
           type: DataTypes.UUID,
+          defaultValue: "00000000-0000-0000-0000-000000000000",
           allowNull: false,
         },
         updatedBy: {
