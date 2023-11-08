@@ -8,6 +8,13 @@ export interface IUser {
   updatedBy: string;
 }
 
+export interface IUserInfo extends Omit<IUser, "password"> {}
+
+export interface IUserDirectory {
+  users: IUserInfo[];
+  count: number;
+}
+
 export interface IAddress {
   addressLine?: string;
   city?: string;
@@ -36,9 +43,11 @@ export interface IEmployee {
   notes?: string;
 }
 
-export interface IEmployeeDetail {
-  employeeCount: number;
-  employeeInfo: IEmployee[];
+export interface IEmployeeInfo extends Omit<IEmployee, "address" | "dateOfBirth" | "salary" | "endDate" | "notes"> {}
+
+export interface IEmployeeDirectory {
+  employees: IEmployeeInfo[];
+  count: number;
 }
 
 export interface IJobListing {

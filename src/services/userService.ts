@@ -1,15 +1,7 @@
 import User from "../models/user";
 import { sign } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { IUser } from "../interfaces/ICommon";
-
-interface UserInfo {
-  username: string;
-  accountType: string;
-  isActive: boolean;
-  createdBy: string;
-  updatedBy: string;
-}
+import { IUser, IUserDirectory, IUserInfo } from "../interfaces/ICommon";
 
 export interface UserParams {
   userId?: string;
@@ -18,7 +10,7 @@ export interface UserParams {
 }
 
 export class UserService {
-  static async createUser(createdById: string, userData: IUser): Promise<UserInfo> {
+  static async createUser(createdById: string, userData: IUser): Promise<IUserInfo> {
     const requiredFields = ["username", "password", "accountType"] as const;
 
     const missingField = requiredFields.find((field) => !userData[field]);
@@ -44,7 +36,8 @@ export class UserService {
       updatedBy: createdById,
     });
 
-    const userInfo: UserInfo = {
+    const userInfo: IUserInfo = {
+      userId: user.userId,
       username: user.username,
       accountType: user.accountType,
       isActive: user.isActive,
@@ -77,7 +70,7 @@ export class UserService {
     return { accessToken };
   }
 
-  static async getUsers(params: UserParams): Promise<UserInfo[]> {
+  static async getUsers(params: UserParams): Promise<IUserDirectory> {
     const { accountType, isActive } = params;
 
     const isActiveBoolean = isActive ? isActive === "true" : undefined;
@@ -97,7 +90,9 @@ export class UserService {
       order: [["username", "ASC"]],
     });
 
-    if (users.length === 0) {
+    const userCount = users.length;
+
+    if (userCount === 0) {
       throw new Error("No users found");
     }
 
@@ -110,17 +105,18 @@ export class UserService {
       updatedBy: user.updatedBy,
     }));
 
-    return userInfo;
+    return {
+      users: userInfo,
+      count: userCount,
+    };
   }
 
-  static async getUserById(userId: string): Promise<UserInfo> {
+  static async getUserById(userId: string): Promise<IUserInfo> {
     if (userId === null) {
       throw new Error("Invalid search criteria");
     }
 
-    const user = await User.findOne({
-      where: { userId: userId },
-    });
+    const user = await User.findByPk(userId);
 
     if (user === null) {
       throw new Error("No user found");
