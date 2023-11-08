@@ -1,13 +1,9 @@
 import User from "../models/user";
 import { sign } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { IUser, IUserDirectory, IUserInfo } from "../interfaces/ICommon";
+import { IUser, IUserDirectory, IUserInfo, IUserParams } from "../interfaces/ICommon";
 
-export interface UserParams {
-  userId?: string;
-  accountType?: string;
-  isActive?: string;
-}
+
 
 export class UserService {
   static async createUser(createdById: string, userData: IUser): Promise<IUserInfo> {
@@ -36,7 +32,7 @@ export class UserService {
       updatedBy: createdById,
     });
 
-    const userInfo: IUserInfo = {
+    const userInfo = {
       userId: user.userId,
       username: user.username,
       accountType: user.accountType,
@@ -70,7 +66,7 @@ export class UserService {
     return { accessToken };
   }
 
-  static async getUsers(params: UserParams): Promise<IUserDirectory> {
+  static async getUsers(params: IUserParams): Promise<IUserDirectory> {
     const { accountType, isActive } = params;
 
     const isActiveBoolean = isActive ? isActive === "true" : undefined;

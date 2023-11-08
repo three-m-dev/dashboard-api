@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
+import { JobListingService } from "../services/jobListingService";
 import { ExtendedRequest } from "../middleware/authMiddleware";
-import { EmployeeService } from "../services/employeeService";
 
-export class EmployeeController {
-  public static async createEmployee(req: ExtendedRequest, res: Response) {
+export class JobListingController {
+  public static async createJobListing(req: ExtendedRequest, res: Response) {
     try {
-      const userId: string = req.params.userId;
+      const user = req.user;
 
-      const newEmployee = await EmployeeService.createEmployee(userId, req.body);
+      const newListing = await JobListingService.createJobListing(user.userId, req.body);
 
-      res.status(201).json(newEmployee);
+      res.status(201).json(newListing);
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -19,11 +19,11 @@ export class EmployeeController {
     }
   }
 
-  public static async getEmployees(req: Request, res: Response) {
+  public static async getJobListings(req: Request, res: Response) {
     try {
-      const employees = await EmployeeService.getEmployees();
+      const jobListings = await JobListingService.getJobListings();
 
-      res.status(200).json(employees);
+      res.status(200).json(jobListings);
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -33,13 +33,13 @@ export class EmployeeController {
     }
   }
 
-  public static async getEmployeeById(req: Request, res: Response) {
+  public static async getJobListingById(req: Request, res: Response) {
     try {
-      const employeeId: string = req.params.employeeId;
+      const jobListingId: string = req.params.jobListingId;
 
-      const employee = await EmployeeService.getEmployeeById(employeeId);
+      const jobListing = await JobListingService.getJobListingById(jobListingId);
 
-      res.status(200).json(employee);
+      res.status(200).json(jobListing);
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });

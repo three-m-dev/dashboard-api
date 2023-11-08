@@ -6,15 +6,14 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
   public title!: string;
   public description!: string;
   public company!: Enumerator;
-  public location!: string;
+  public location!: Enumerator;
   public department!: string;
-  public employmentType!: string;
+  public employmentType!: Enumerator;
   public requirements!: object;
   public qualifications!: object;
   public salaryRange!: string;
   public benefits!: object;
   public listingStatus!: Enumerator;
-
   public createdBy!: string;
   public updatedBy!: string;
 
@@ -41,7 +40,8 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
           allowNull: false,
         },
         location: {
-          type: DataTypes.STRING,
+          type: DataTypes.ENUM,
+          values: ["on-site", "remote", "hybrid"],
           allowNull: false,
         },
         department: {
@@ -49,7 +49,8 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
           allowNull: false,
         },
         employmentType: {
-          type: DataTypes.STRING,
+          type: DataTypes.ENUM,
+          values: ["full-time", "part-time", "internship", "subcontract"],
           allowNull: false,
         },
         requirements: {
@@ -71,6 +72,7 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
         listingStatus: {
           type: DataTypes.ENUM,
           values: ["open", "closed", "paused", "filled", "archived"],
+          defaultValue: "open",
           allowNull: false,
         },
         createdBy: {

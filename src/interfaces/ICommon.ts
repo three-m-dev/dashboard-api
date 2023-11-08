@@ -15,6 +15,12 @@ export interface IUserDirectory {
   count: number;
 }
 
+export interface IUserParams {
+  userId?: string;
+  accountType?: string;
+  isActive?: string;
+}
+
 export interface IAddress {
   addressLine?: string;
   city?: string;
@@ -55,9 +61,9 @@ export interface IJobListing {
   title: string;
   description: string;
   company: Enumerator;
-  location: string;
+  location: Enumerator;
   department: string;
-  employmentType: string;
+  employmentType: Enumerator;
   requirements: object;
   qualifications: object;
   salaryRange: string;
@@ -65,6 +71,11 @@ export interface IJobListing {
   listingStatus: Enumerator;
   createdBy: string;
   updatedBy: string;
+}
+
+export interface IJobListingDirectory {
+  jobListings: IJobListing[];
+  count: number;
 }
 
 export interface IQuestionAnswer {

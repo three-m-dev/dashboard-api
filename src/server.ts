@@ -6,8 +6,10 @@ import compression from "compression";
 import cors from "cors";
 import logging from "./config/logging";
 import db from "./models/index";
+
 import userRoutes from "./routes/userRoutes";
 import employeeRoutes from "./routes/employeeRoutes";
+import jobListingRoutes from "./routes/jobListingRoutes";
 
 const NAMESPACE = "Server";
 const router = express();
@@ -49,6 +51,7 @@ router.use(bodyParser.json());
 
 router.use("/api/v1/users", userRoutes);
 router.use("/api/v1/employees", employeeRoutes);
+router.use("/api/v1/job-listings", jobListingRoutes);
 
 const app = http.createServer(router);
 

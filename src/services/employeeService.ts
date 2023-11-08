@@ -28,7 +28,7 @@ export class EmployeeService {
       throw new Error(`Missing required field: ${missingField}`);
     }
 
-    const employee: IEmployee = await Employee.create({
+    const employee = await Employee.create({
       employeeId: employeeData.employeeId,
       userId: userId,
       firstName: employeeData.firstName,

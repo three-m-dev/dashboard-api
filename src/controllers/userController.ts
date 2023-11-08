@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { UserParams, UserService } from "../services/userService";
 import { ExtendedRequest } from "../middleware/authMiddleware";
+import { UserService } from "../services/userService";
+import { IUserParams } from "../interfaces/ICommon";
 
 export class UserController {
   public static async createUser(req: ExtendedRequest, res: Response) {
@@ -34,11 +35,11 @@ export class UserController {
 
   public static async getUsers(req: Request, res: Response) {
     try {
-      const queryParams: UserParams = {};
+      const queryParams: IUserParams = {};
       const allowedFilters = ["accountType", "isActive"];
       allowedFilters.forEach((filter) => {
         if (req.query[filter]) {
-          queryParams[filter as keyof UserParams] = req.query[filter] as string;
+          queryParams[filter as keyof IUserParams] = req.query[filter] as string;
         }
       });
 
