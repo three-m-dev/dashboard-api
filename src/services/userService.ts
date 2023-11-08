@@ -7,39 +7,46 @@ interface UserInfo {
   accountType: string;
   isActive: boolean;
   createdBy: string;
+  updatedBy: string;
 }
 
 export interface UserParams {
+  userId?: string;
   accountType?: string;
   isActive?: string;
 }
 
 export class UserService {
-  static async createUser(userData: IUser): Promise<{ username: string; accountType: string }> {
+  static async createUser(createdById: string, userData: IUser): Promise<UserInfo> {
     const requiredFields = ["username", "password", "accountType"] as const;
-
     const missingField = requiredFields.find((field) => !userData[field]);
     if (missingField) {
       throw new Error(`Missing required field: ${missingField}`);
     }
-
     const existingUser = await User.findOne({
       where: { username: userData.username },
     });
-
     if (existingUser) {
       throw new Error("Username already exists");
     }
 
+    console.log(createdById);
+
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    userData.password = hashedPassword;
-
-    const newUser = await User.create(userData);
-
-    return {
-      username: newUser.username,
-      accountType: newUser.accountType,
+    const user = await User.create({
+      ...userData,
+      password: hashedPassword,
+      createdBy: createdById,
+      updatedBy: createdById,
+    });
+    const userInfo: UserInfo = {
+      username: user.username,
+      accountType: user.accountType,
+      isActive: user.isActive,
+      createdBy: user.createdBy,
+      updatedBy: user.updatedBy,
     };
+    return userInfo;
   }
 
   static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
@@ -57,11 +64,9 @@ export class UserService {
       throw new Error("Invalid password");
     }
 
-    const accessToken = sign(
-      { id: user.userId, username: user.username },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "24h" }
-    );
+    const accessToken = sign({ userId: user.userId, username: user.username }, process.env.JWT_SECRET as string, {
+      expiresIn: "24h",
+    });
 
     return { accessToken };
   }
@@ -82,8 +87,8 @@ export class UserService {
     }
 
     const users = await User.findAll({
-      attributes: ["username", "accountType", "isActive", "createdBy"],
       where: whereConditions,
+      order: [["username", "ASC"]],
     });
 
     if (users.length === 0) {
@@ -91,11 +96,38 @@ export class UserService {
     }
 
     const userInfo = users.map((user) => ({
+      userId: user.userId,
       username: user.username,
       accountType: user.accountType,
       isActive: user.isActive,
       createdBy: user.createdBy,
+      updatedBy: user.updatedBy,
     }));
+
+    return userInfo;
+  }
+
+  static async getUserById(userId: string): Promise<UserInfo> {
+    if (userId === null) {
+      throw new Error("Invalid search criteria");
+    }
+
+    const user = await User.findOne({
+      where: { userId: userId },
+    });
+
+    if (user === null) {
+      throw new Error("No user found");
+    }
+
+    const userInfo = {
+      userId: user.userId,
+      username: user.username,
+      accountType: user.accountType,
+      isActive: user.isActive,
+      createdBy: user.createdBy,
+      updatedBy: user.updatedBy,
+    };
 
     return userInfo;
   }

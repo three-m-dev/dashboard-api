@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/create", UserController.createUser);
+router.get("/:userId", protect, UserController.getUserById);
+
+router.get("/", protect, UserController.getUsers);
+
+router.post("/create", protect, UserController.createUser);
 
 router.post("/auth", UserController.authUser);
-
-router.get("/", UserController.getUsers);
 
 export default router;
