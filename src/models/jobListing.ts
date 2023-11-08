@@ -1,21 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-
-export interface IJobListing {
-  jobListingId: string;
-  title: string;
-  description: string;
-  company: Enumerator;
-  location: string;
-  department: string;
-  employmentType: string;
-  requirements: object;
-  qualifications: object;
-  salaryRange: string;
-  benefits: object;
-  listingStatus: Enumerator;
-  createdBy: string;
-  updatedBy: string;
-}
+import { IJobListing } from "../interfaces/ICommon";
 
 export class JobListing extends Model<IJobListing> implements IJobListing {
   public jobListingId!: string;

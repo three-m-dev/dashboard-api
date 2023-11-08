@@ -1,14 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-
-export interface IUser {
-  userId: string;
-  username: string;
-  password: string;
-  accountType: string;
-  isActive: boolean;
-  createdBy: string;
-  updatedBy: string;
-}
+import { IUser } from "../interfaces/ICommon";
 
 export class User extends Model<IUser> implements IUser {
   public userId!: string;

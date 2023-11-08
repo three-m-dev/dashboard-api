@@ -1,29 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-
-export interface IQuestionAnswer {
-  question: string;
-  answer: string;
-}
-
-export type IAnswers = [IQuestionAnswer, IQuestionAnswer, IQuestionAnswer, IQuestionAnswer];
-
-export interface IApplicant {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  resume: string;
-  answers: IAnswers;
-}
-
-export interface IJobApplication {
-  jobApplicationId: string;
-  jobListingId: string;
-  applicationDate: Date;
-  applicationStatus: Enumerator;
-  applicationSource: Enumerator;
-  applicant: IApplicant;
-}
+import { IApplicant, IJobApplication } from "../interfaces/ICommon";
 
 export class JobApplication extends Model<IJobApplication> implements IJobApplication {
   public jobApplicationId!: string;

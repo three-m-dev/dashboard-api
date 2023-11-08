@@ -1,32 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-
-export interface IAddress {
-  addressLine?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postalCode?: string;
-}
-
-export interface IEmployee {
-  employeeId: string;
-  userId: string;
-  firstName: string;
-  middleInitial?: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  address: IAddress;
-  dateOfBirth?: Date;
-  hireDate: Date;
-  role: string;
-  department: string;
-  directReport: string;
-  employmentStatus: string;
-  salary?: number;
-  endDate?: Date;
-  notes?: string;
-}
+import { IAddress, IEmployee } from "../interfaces/ICommon";
 
 export class Employee extends Model<IEmployee> implements IEmployee {
   public employeeId!: string;
