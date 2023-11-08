@@ -1,4 +1,4 @@
-import { IEmployee, IEmployeeDetail } from "../interfaces/ICommon";
+import { IEmployee, IEmployeeDirectory, IEmployeeInfo } from "../interfaces/ICommon";
 import Employee from "../models/employee";
 
 export class EmployeeService {
@@ -51,7 +51,7 @@ export class EmployeeService {
     return employee;
   }
 
-  static async getEmployees(): Promise<IEmployeeDetail> {
+  static async getEmployees(): Promise<IEmployeeDirectory> {
     const employees = await Employee.findAll({
       order: [["lastName", "ASC"]],
     });
@@ -70,21 +70,45 @@ export class EmployeeService {
       lastName: employee.lastName,
       email: employee.email,
       phoneNumber: employee.phoneNumber,
-      address: employee.address,
-      dateOfBirth: employee.dateOfBirth,
       hireDate: employee.hireDate,
       role: employee.role,
       department: employee.department,
       directReport: employee.directReport,
       employmentStatus: employee.employmentStatus,
-      salary: employee.salary,
-      endDate: employee.endDate,
-      notes: employee.notes,
     }));
 
     return {
-      employeeCount,
-      employeeInfo,
+      employees: employeeInfo,
+      count: employeeCount,
     };
+  }
+
+  static async getEmployeeById(employeeId: string): Promise<IEmployeeInfo> {
+    if (employeeId === null) {
+      throw new Error("Invalid search criteria");
+    }
+
+    const employee = await Employee.findByPk(employeeId);
+
+    if (employee === null) {
+      throw new Error("No employee found");
+    }
+
+    const employeeInfo = {
+      employeeId: employee.employeeId,
+      userId: employee.userId,
+      firstName: employee.firstName,
+      middleInitial: employee.middleInitial,
+      lastName: employee.lastName,
+      email: employee.email,
+      phoneNumber: employee.phoneNumber,
+      hireDate: employee.hireDate,
+      role: employee.role,
+      department: employee.department,
+      directReport: employee.directReport,
+      employmentStatus: employee.employmentStatus,
+    };
+
+    return employeeInfo;
   }
 }

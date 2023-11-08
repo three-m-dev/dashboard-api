@@ -32,4 +32,20 @@ export class EmployeeController {
       }
     }
   }
+
+  public static async getEmployeeById(req: Request, res: Response) {
+    try {
+      const employeeId: string = req.params.employeeId;
+
+      const employee = await EmployeeService.getEmployeeById(employeeId);
+
+      res.status(200).json(employee);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "An unexpected error occurred" });
+      }
+    }
+  }
 }
