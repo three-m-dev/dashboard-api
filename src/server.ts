@@ -7,6 +7,7 @@ import cors from "cors";
 import logging from "./config/logging";
 import db from "./models/index";
 import userRoutes from "./routes/userRoutes";
+import employeeRoutes from "./routes/employeeRoutes";
 
 const NAMESPACE = "Server";
 const router = express();
@@ -23,10 +24,7 @@ db.sequelize
   });
 
 router.use((req, res, next) => {
-  logging.info(
-    NAMESPACE,
-    `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
-  );
+  logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
   res.on("finish", () => {
     logging.info(
@@ -50,6 +48,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 router.use("/api/v1/users", userRoutes);
+router.use("/api/v1/employees", employeeRoutes);
 
 const app = http.createServer(router);
 

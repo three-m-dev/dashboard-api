@@ -1,6 +1,7 @@
-import User, { IUser } from "../models/user";
+import User from "../models/user";
 import { sign } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { IUser } from "../interfaces/ICommon";
 
 interface UserInfo {
   username: string;
@@ -19,26 +20,30 @@ export interface UserParams {
 export class UserService {
   static async createUser(createdById: string, userData: IUser): Promise<UserInfo> {
     const requiredFields = ["username", "password", "accountType"] as const;
+
     const missingField = requiredFields.find((field) => !userData[field]);
+
     if (missingField) {
       throw new Error(`Missing required field: ${missingField}`);
     }
-    const existingUser = await User.findOne({
+
+    const existingUser = await User.findAll({
       where: { username: userData.username },
     });
-    if (existingUser) {
+
+    if (existingUser.length > 0) {
       throw new Error("Username already exists");
     }
 
-    console.log(createdById);
-
     const hashedPassword = await bcrypt.hash(userData.password, 10);
+
     const user = await User.create({
       ...userData,
       password: hashedPassword,
       createdBy: createdById,
       updatedBy: createdById,
     });
+
     const userInfo: UserInfo = {
       username: user.username,
       accountType: user.accountType,
@@ -46,6 +51,7 @@ export class UserService {
       createdBy: user.createdBy,
       updatedBy: user.updatedBy,
     };
+
     return userInfo;
   }
 
