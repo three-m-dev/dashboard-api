@@ -1,13 +1,17 @@
-import { Router } from "express";
-import { EmployeeController } from "../controllers/employeeController";
-import { protect } from "../middleware/authMiddleware";
+import { Router } from 'express';
+import { EmployeeController } from '../controllers/employeeController';
+import { protect } from '../middleware/authMiddleware';
 
 const router = Router();
 
-router.get("/:employeeId", protect, EmployeeController.getEmployeeById);
+router.post('/create/:userId', protect, EmployeeController.createEmployee);
 
-router.post("/create/:userId", protect, EmployeeController.createEmployee);
+router.put('/:employeeId', protect);
 
-router.get("/", protect, EmployeeController.getEmployees);
+router.delete('/:employeeId', protect);
+
+router.get('/', protect, EmployeeController.getEmployees);
+
+router.get('/:employeeId', protect, EmployeeController.getEmployeeById);
 
 export default router;

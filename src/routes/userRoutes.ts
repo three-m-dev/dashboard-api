@@ -1,15 +1,15 @@
-import { Router } from "express";
-import { UserController } from "../controllers/userController";
-import { protect } from "../middleware/authMiddleware";
+import { Router } from 'express';
+import { UserController } from '../controllers/userController';
+import { protect } from '../middleware/authMiddleware';
 
 const router = Router();
 
-router.get("/:userId", protect, UserController.getUserById);
+router.post('/auth', UserController.authUser);
 
-router.get("/", protect, UserController.getUsers);
+router.post('/', protect, UserController.createUser);
 
-router.post("/create", protect, UserController.createUser);
+router.get('/', protect, UserController.getUsers);
 
-router.post("/auth", UserController.authUser);
+router.get('/:userId', protect, UserController.getUserById);
 
 export default router;
