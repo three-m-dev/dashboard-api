@@ -1,16 +1,15 @@
 import { IEmployee, IEmployeeDirectory } from '../interfaces/ICommon';
-import Employee from '../models/employee';
-import User from '../models/user';
+import db from '../models';
 
 export class EmployeeService {
 	static async createEmployee(userId: string, employeeData: IEmployee): Promise<IEmployee> {
-		const user = await User.findByPk(userId);
+		const user = await db.User.findByPk(userId);
 
 		if (user === null) {
 			throw new Error('User does not exist');
 		}
 
-		const existingEmployee = await Employee.findAll({
+		const existingEmployee = await db.Employee.findAll({
 			where: { userId: userId },
 		});
 
@@ -35,7 +34,7 @@ export class EmployeeService {
 			throw new Error(`Missing required field: ${missingField}`);
 		}
 
-		const employee = await Employee.create({
+		const employee = await db.Employee.create({
 			employeeId: employeeData.employeeId,
 			userId: userId,
 			firstName: employeeData.firstName,
@@ -59,7 +58,7 @@ export class EmployeeService {
 	}
 
 	static async getEmployees(): Promise<IEmployeeDirectory> {
-		const employees = await Employee.findAll({
+		const employees = await db.Employee.findAll({
 			order: [['lastName', 'ASC']],
 		});
 
@@ -80,7 +79,7 @@ export class EmployeeService {
 			throw new Error('Invalid search criteria');
 		}
 
-		const employee = await Employee.findByPk(employeeId);
+		const employee = await db.Employee.findByPk(employeeId);
 
 		if (employee === null) {
 			throw new Error('No employee found');

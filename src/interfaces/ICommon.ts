@@ -67,6 +67,7 @@ export interface IJobListing {
 	salaryRange: string;
 	benefits: object;
 	listingStatus: Enumerator;
+	applicantCount: number;
 	createdBy: string;
 	updatedBy: string;
 }
@@ -99,4 +100,9 @@ export interface IJobApplication {
 	applicationStatus: Enumerator;
 	applicationSource: Enumerator;
 	applicant: IApplicant;
+}
+
+export interface IJobApplicationDirectory {
+	jobApplications: IJobApplication[];
+	count: number;
 }
