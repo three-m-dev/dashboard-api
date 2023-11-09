@@ -24,14 +24,17 @@ export class Subscriber extends Model<ISubscriber> implements ISubscriber {
 				},
 				subscribedAt: {
 					type: DataTypes.DATE,
+					defaultValue: DataTypes.NOW,
 					allowNull: false,
 				},
 				isSubscribed: {
 					type: DataTypes.BOOLEAN,
+					defaultValue: true,
 					allowNull: false,
 				},
 				unsubscribeToken: {
-					type: DataTypes.STRING,
+					type: DataTypes.UUID,
+					defaultValue: DataTypes.UUIDV4,
 					allowNull: false,
 				},
 				unsubscribedAt: {
@@ -40,7 +43,7 @@ export class Subscriber extends Model<ISubscriber> implements ISubscriber {
 				},
 			},
 			{
-				tableName: 'employees',
+				tableName: 'subscribers',
 				sequelize,
 			}
 		);
