@@ -2,10 +2,10 @@ import User from '../models/user';
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { validate } from 'uuid';
-import { IUser, IUserDirectory, IUserNoPass, IUserParams } from '../interfaces/ICommon';
+import { IUser, IUserDirectory, IUserParams, IUserWithoutPassword } from '../interfaces/ICommon';
 
 export class UserService {
-	static async createUser(createdById: string, userData: IUser): Promise<IUserNoPass> {
+	static async createUser(createdById: string, userData: IUser): Promise<IUserWithoutPassword> {
 		const requiredFields = ['username', 'password', 'accountType'] as const;
 
 		const missingField = requiredFields.find((field) => !userData[field]);
@@ -31,9 +31,9 @@ export class UserService {
 			updatedBy: createdById,
 		});
 
-		const { password, ...userNoPass } = user;
+		const { password, ...userWithoutPassword } = user.get({ plain: true });
 
-		return userNoPass;
+		return userWithoutPassword;
 	}
 
 	static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
@@ -91,7 +91,7 @@ export class UserService {
 		};
 	}
 
-	static async getUserById(userId: string): Promise<IUserNoPass> {
+	static async getUserById(userId: string): Promise<IUserWithoutPassword> {
 		if (!validate(userId)) {
 			throw new Error('Invalid search criteria');
 		}
@@ -106,8 +106,8 @@ export class UserService {
 			throw new Error('No user found');
 		}
 
-		const { password, ...userNoPass } = user;
+		const { password, ...userWithoutPassword } = user.get({ plain: true });
 
-		return userNoPass;
+		return userWithoutPassword;
 	}
 }
