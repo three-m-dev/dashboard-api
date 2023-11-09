@@ -4,11 +4,11 @@ import path from 'path';
 
 export class EmailService {
 	static transporter = nodemailer.createTransport({
-		host: 'mail.privateemail.com',
+		host: process.env.EMAIL_HOST,
 		port: 587,
-		secure: false, // For port 587, false; for port 465, true.
+		secure: false,
 		auth: {
-			user: 'noreply@gridcraft.io',
+			user: process.env.EMAIL_USERNAME,
 			pass: process.env.EMAIL_PASSWORD,
 		},
 		tls: {
@@ -32,7 +32,7 @@ export class EmailService {
 
 	static async sendEmail(email: string, subject: string, template: string, context: any): Promise<void> {
 		const mailOptions = {
-			from: '"GridCraft" <noreply@gridcraft.io>',
+			from: `Jacob <${process.env.EMAIL_USERNAME}>`,
 			to: email,
 			subject: subject,
 			template: template,
@@ -50,7 +50,9 @@ export class EmailService {
 		const template = 'welcome';
 		const context = {
 			name: userName,
-			email: toEmail,
+			support_email: 'support@setup123.com',
+			foundation_year: 1971,
+			number_of_countries: 50,
 		};
 
 		await EmailService.sendEmail(toEmail, subject, template, context);

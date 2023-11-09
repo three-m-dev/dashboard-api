@@ -1,11 +1,27 @@
-<html>
+<html lang='en'>
 	<head>
-		<meta charset='utf-8' />
-		<meta http-equiv='x-ua-compatible' content='ie=edge' />
-		<title>Welcome Email</title>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+		<link rel='stylesheet' href='welcome.css' />
+		<title>Welcome to the Team!</title>
 	</head>
 	<body>
-		<h2>Hello {{name}}! </h2>
-		<p>We're glad to have you on board at {{email}}. </p>
+		<div class='container'>
+			<h2>Welcome Aboard, {{name}}!</h2>
+			<p>We're thrilled to have you on board. If you have any questions, feel free to contact us at
+				{{support_email}}.</p>
+			<h3>Onboarding Checklist</h3>
+			<ul class='checklist'>
+				<li>Set up your company email account</li>
+				<li>Complete your profile on our internal platform</li>
+				<li>Schedule your first team meeting</li>
+				<li>Read through the employee handbook</li>
+			</ul>
+			<h3>Interesting Facts</h3>
+			<p>Did you know? Our company was founded in the year
+				{{foundation_year}}
+				and has been on an incredible journey ever since!</p>
+			<p>Another fact: We have employees from over {{number_of_countries}} different countries!</p>
+		</div>
 	</body>
 </html>
