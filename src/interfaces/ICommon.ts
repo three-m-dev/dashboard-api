@@ -106,3 +106,12 @@ export interface IJobApplicationDirectory {
 	jobApplications: IJobApplication[];
 	count: number;
 }
+
+export interface ISubscriber {
+	subscriberId: string;
+	email: string;
+	subscribedAt: Date;
+	isSubscribed: boolean;
+	unsubscribeToken: string;
+	unsubscribedAt?: Date;
+}
