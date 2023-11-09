@@ -2,18 +2,10 @@ import User from '../models/user';
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { validate } from 'uuid';
-import {
-	IUser,
-	IUserDirectory,
-	IUserInfo,
-	IUserParams,
-} from '../interfaces/ICommon';
+import { IUser, IUserDirectory, IUserNoPass, IUserParams } from '../interfaces/ICommon';
 
 export class UserService {
-	static async createUser(
-		createdById: string,
-		userData: IUser
-	): Promise<IUserInfo> {
+	static async createUser(createdById: string, userData: IUser): Promise<IUserNoPass> {
 		const requiredFields = ['username', 'password', 'accountType'] as const;
 
 		const missingField = requiredFields.find((field) => !userData[field]);
@@ -39,22 +31,12 @@ export class UserService {
 			updatedBy: createdById,
 		});
 
-		const userInfo = {
-			userId: user.userId,
-			username: user.username,
-			accountType: user.accountType,
-			isActive: user.isActive,
-			createdBy: user.createdBy,
-			updatedBy: user.updatedBy,
-		};
+		const { password, ...userNoPass } = user;
 
-		return userInfo;
+		return userNoPass;
 	}
 
-	static async authUser(
-		username: string,
-		password: string
-	): Promise<{ accessToken: string }> {
+	static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
 		if (!username || !password) {
 			throw new Error('Missing credentials');
 		}
@@ -69,13 +51,9 @@ export class UserService {
 			throw new Error('Invalid password');
 		}
 
-		const accessToken = sign(
-			{ userId: user.userId, username: user.username },
-			process.env.JWT_SECRET as string,
-			{
-				expiresIn: '24h',
-			}
-		);
+		const accessToken = sign({ userId: user.userId, username: user.username }, process.env.JWT_SECRET as string, {
+			expiresIn: '24h',
+		});
 
 		return { accessToken };
 	}
@@ -96,6 +74,7 @@ export class UserService {
 		}
 
 		const users = await User.findAll({
+			attributes: { exclude: ['password'] },
 			where: whereConditions,
 			order: [['username', 'ASC']],
 		});
@@ -106,22 +85,13 @@ export class UserService {
 			throw new Error('No users found');
 		}
 
-		const userInfo = users.map((user) => ({
-			userId: user.userId,
-			username: user.username,
-			accountType: user.accountType,
-			isActive: user.isActive,
-			createdBy: user.createdBy,
-			updatedBy: user.updatedBy,
-		}));
-
 		return {
-			users: userInfo,
+			users: users,
 			count: userCount,
 		};
 	}
 
-	static async getUserById(userId: string): Promise<IUserInfo> {
+	static async getUserById(userId: string): Promise<IUserNoPass> {
 		if (!validate(userId)) {
 			throw new Error('Invalid search criteria');
 		}
@@ -136,15 +106,8 @@ export class UserService {
 			throw new Error('No user found');
 		}
 
-		const userInfo = {
-			userId: user.userId,
-			username: user.username,
-			accountType: user.accountType,
-			isActive: user.isActive,
-			createdBy: user.createdBy,
-			updatedBy: user.updatedBy,
-		};
+		const { password, ...userNoPass } = user;
 
-		return userInfo;
+		return userNoPass;
 	}
 }

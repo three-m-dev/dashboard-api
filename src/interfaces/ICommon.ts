@@ -8,10 +8,10 @@ export interface IUser {
 	updatedBy: string;
 }
 
-export interface IUserInfo extends Omit<IUser, 'password'> {}
+export interface IUserNoPass extends Omit<IUser, 'password'> {}
 
 export interface IUserDirectory {
-	users: IUserInfo[];
+	users: IUserNoPass[];
 	count: number;
 }
 
