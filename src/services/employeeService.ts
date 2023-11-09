@@ -1,8 +1,16 @@
 import { IEmployee, IEmployeeDirectory, IEmployeeInfo } from "../interfaces/ICommon";
 import Employee from "../models/employee";
+import User from "../models/user";
 
 export class EmployeeService {
   static async createEmployee(userId: string, employeeData: IEmployee): Promise<IEmployee> {
+
+    const user = await User.findByPk(userId);
+
+    if (user === null) {
+      throw new Error("User does not exist");
+    }
+
     const existingEmployee = await Employee.findAll({
       where: { userId: userId },
     });
