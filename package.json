@@ -23,8 +23,11 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
+    "express-handlebars": "^7.1.2",
     "jsonwebtoken": "^9.0.1",
     "mysql2": "^3.6.0",
+    "nodemailer": "^6.9.7",
+    "nodemailer-express-handlebars": "^6.1.0",
     "sequelize": "^6.32.1"
   },
   "devDependencies": {
@@ -38,6 +41,8 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/mysql": "^2.15.21",
     "@types/node": "^20.4.7",
+    "@types/nodemailer": "^6.4.14",
+    "@types/nodemailer-express-handlebars": "^4.0.5",
     "@types/sequelize": "^4.28.15",
     "@types/uuid": "^9.0.7",
     "cross-env": "^7.0.3",

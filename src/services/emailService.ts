@@ -1,15 +1,58 @@
-export class EmailService {
-	static async sendEmail(email: string, subject: string, body: string): Promise<void> {}
+import nodemailer from 'nodemailer';
+import nodemailerHbs from 'nodemailer-express-handlebars';
+import path from 'path';
 
-	static async sendPasswordResetEmail(email: string, resetToken: string): Promise<void> {
-		const subject = 'Password Reset';
-		const body = `Click the link below to reset your password: ${resetToken}`;
-		await EmailService.sendEmail(email, subject, body);
+export class EmailService {
+	static transporter = nodemailer.createTransport({
+		host: 'mail.privateemail.com',
+		port: 587,
+		secure: false, // For port 587, false; for port 465, true.
+		auth: {
+			user: 'noreply@gridcraft.io',
+			pass: process.env.EMAIL_PASSWORD,
+		},
+		tls: {
+			rejectUnauthorized: false,
+		},
+	});
+
+	static initializeTemplates() {
+		EmailService.transporter.use(
+			'compile',
+			nodemailerHbs({
+				viewEngine: {
+					extname: '.handlebars',
+					partialsDir: path.resolve('./views/'),
+					defaultLayout: false,
+				},
+				viewPath: path.resolve('./views/'),
+			})
+		);
 	}
 
-	static async sendUnsubscribeEmail(email: string, unsubscribeToken: string): Promise<void> {
-		const subject = 'Unsubscribe';
-		const body = `Click the link below to unsubscribe: ${unsubscribeToken}`;
-		await EmailService.sendEmail(email, subject, body);
+	static async sendEmail(email: string, subject: string, template: string, context: any): Promise<void> {
+		const mailOptions = {
+			from: '"GridCraft" <noreply@gridcraft.io>',
+			to: email,
+			subject: subject,
+			template: template,
+			context: context,
+		};
+
+		const result = await EmailService.transporter.sendMail(mailOptions);
+		if (!result) {
+			throw new Error('Failed to send email');
+		}
+	}
+
+	static async sendWelcomeEmail(toEmail: string, userName: string): Promise<void> {
+		const subject = 'Welcome to Three M!';
+		const template = 'welcome';
+		const context = {
+			name: userName,
+			email: toEmail,
+		};
+
+		await EmailService.sendEmail(toEmail, subject, template, context);
 	}
 }

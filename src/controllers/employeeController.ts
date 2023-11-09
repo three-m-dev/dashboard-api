@@ -1,51 +1,72 @@
-import { Request, Response } from "express";
-import { ExtendedRequest } from "../middleware/authMiddleware";
-import { EmployeeService } from "../services/employeeService";
+import { Request, Response } from 'express';
+import { ExtendedRequest } from '../middleware/authMiddleware';
+import { EmployeeService } from '../services/employeeService';
+import { EmailService } from '../services/emailService';
 
 export class EmployeeController {
-  public static async createEmployee(req: ExtendedRequest, res: Response) {
-    try {
-      const userId: string = req.params.userId;
+	public static async createEmployee(req: ExtendedRequest, res: Response) {
+		try {
+			const userId: string = req.params.userId;
 
-      const newEmployee = await EmployeeService.createEmployee(userId, req.body);
+			const newEmployee = await EmployeeService.createEmployee(userId, req.body);
 
-      res.status(201).json(newEmployee);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "An unexpected error occurred" });
-      }
-    }
-  }
+			res.status(201).json(newEmployee);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
 
-  public static async getEmployees(req: Request, res: Response) {
-    try {
-      const employees = await EmployeeService.getEmployees();
+	public static async sendWelcomeEmail(req: Request, res: Response) {
+		try {
+			const employeeId: string = req.params.employeeId;
 
-      res.status(200).json(employees);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "An unexpected error occurred" });
-      }
-    }
-  }
+			const employee = await EmployeeService.getEmployeeById(employeeId);
 
-  public static async getEmployeeById(req: Request, res: Response) {
-    try {
-      const employeeId: string = req.params.employeeId;
+			const { email, firstName } = employee;
 
-      const employee = await EmployeeService.getEmployeeById(employeeId);
+			await EmailService.sendWelcomeEmail(email, firstName);
 
-      res.status(200).json(employee);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "An unexpected error occurred" });
-      }
-    }
-  }
+			res.status(200).json({ message: 'Welcome email sent successfully!' });
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
+
+	public static async getEmployees(req: Request, res: Response) {
+		try {
+			const employees = await EmployeeService.getEmployees();
+
+			res.status(200).json(employees);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
+
+	public static async getEmployeeById(req: Request, res: Response) {
+		try {
+			const employeeId: string = req.params.employeeId;
+
+			const employee = await EmployeeService.getEmployeeById(employeeId);
+
+			res.status(200).json(employee);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
 }

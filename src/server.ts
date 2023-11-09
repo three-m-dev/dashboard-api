@@ -12,11 +12,14 @@ import employeeRoutes from './routes/employeeRoutes';
 import jobListingRoutes from './routes/jobListingRoutes';
 import jobApplicationRoutes from './routes/jobApplicationRoutes';
 import subscriberRoutes from './routes/subscriberRoutes';
+import { EmailService } from './services/emailService';
 
 const NAMESPACE = 'Server';
 const router = express();
 const PORT: string = process.env.PORT || '3000';
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
+
+EmailService.initializeTemplates();
 
 db.sequelize
 	.sync()

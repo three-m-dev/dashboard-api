@@ -6,12 +6,14 @@ const router = Router();
 
 router.post('/create/:userId', protect, EmployeeController.createEmployee);
 
+router.post('/:employeeId/welcome-email', EmployeeController.sendWelcomeEmail);
+
+router.get('/:employeeId', protect, EmployeeController.getEmployeeById);
+
 router.put('/:employeeId', protect);
 
 router.delete('/:employeeId', protect);
 
 router.get('/', protect, EmployeeController.getEmployees);
-
-router.get('/:employeeId', protect, EmployeeController.getEmployeeById);
 
 export default router;
