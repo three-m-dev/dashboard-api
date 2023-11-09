@@ -1,122 +1,91 @@
-import { IEmployee, IEmployeeDirectory, IEmployeeInfo } from "../interfaces/ICommon";
-import Employee from "../models/employee";
-import User from "../models/user";
+import { IEmployee, IEmployeeDirectory } from '../interfaces/ICommon';
+import Employee from '../models/employee';
+import User from '../models/user';
 
 export class EmployeeService {
-  static async createEmployee(userId: string, employeeData: IEmployee): Promise<IEmployee> {
+	static async createEmployee(userId: string, employeeData: IEmployee): Promise<IEmployee> {
+		const user = await User.findByPk(userId);
 
-    const user = await User.findByPk(userId);
+		if (user === null) {
+			throw new Error('User does not exist');
+		}
 
-    if (user === null) {
-      throw new Error("User does not exist");
-    }
+		const existingEmployee = await Employee.findAll({
+			where: { userId: userId },
+		});
 
-    const existingEmployee = await Employee.findAll({
-      where: { userId: userId },
-    });
+		if (existingEmployee.length > 0) {
+			throw new Error('User already associated with employee');
+		}
 
-    if (existingEmployee.length > 0) {
-      throw new Error("User already associated with employee");
-    }
+		const requiredFields = [
+			'firstName',
+			'lastName',
+			'email',
+			'hireDate',
+			'role',
+			'department',
+			'directReport',
+			'employmentStatus',
+		] as const;
 
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "hireDate",
-      "role",
-      "department",
-      "directReport",
-      "employmentStatus",
-    ] as const;
+		const missingField = requiredFields.find((field) => !employeeData[field]);
 
-    const missingField = requiredFields.find((field) => !employeeData[field]);
+		if (missingField) {
+			throw new Error(`Missing required field: ${missingField}`);
+		}
 
-    if (missingField) {
-      throw new Error(`Missing required field: ${missingField}`);
-    }
+		const employee = await Employee.create({
+			employeeId: employeeData.employeeId,
+			userId: userId,
+			firstName: employeeData.firstName,
+			middleInitial: employeeData.middleInitial,
+			lastName: employeeData.lastName,
+			email: employeeData.email,
+			phoneNumber: employeeData.phoneNumber,
+			address: employeeData.address,
+			dateOfBirth: employeeData.dateOfBirth,
+			hireDate: employeeData.hireDate,
+			role: employeeData.role,
+			department: employeeData.department,
+			directReport: employeeData.directReport,
+			employmentStatus: employeeData.employmentStatus,
+			salary: employeeData.salary,
+			endDate: employeeData.endDate,
+			notes: employeeData.notes,
+		});
 
-    const employee = await Employee.create({
-      employeeId: employeeData.employeeId,
-      userId: userId,
-      firstName: employeeData.firstName,
-      middleInitial: employeeData.middleInitial,
-      lastName: employeeData.lastName,
-      email: employeeData.email,
-      phoneNumber: employeeData.phoneNumber,
-      address: employeeData.address,
-      dateOfBirth: employeeData.dateOfBirth,
-      hireDate: employeeData.hireDate,
-      role: employeeData.role,
-      department: employeeData.department,
-      directReport: employeeData.directReport,
-      employmentStatus: employeeData.employmentStatus,
-      salary: employeeData.salary,
-      endDate: employeeData.endDate,
-      notes: employeeData.notes,
-    });
+		return employee;
+	}
 
-    return employee;
-  }
+	static async getEmployees(): Promise<IEmployeeDirectory> {
+		const employees = await Employee.findAll({
+			order: [['lastName', 'ASC']],
+		});
 
-  static async getEmployees(): Promise<IEmployeeDirectory> {
-    const employees = await Employee.findAll({
-      order: [["lastName", "ASC"]],
-    });
+		const employeeCount: number = employees.length;
 
-    const employeeCount: number = employees.length;
+		if (employeeCount === 0) {
+			throw new Error('No employees found');
+		}
 
-    if (employeeCount === 0) {
-      throw new Error("No employees found");
-    }
+		return {
+			employees: employees,
+			count: employeeCount,
+		};
+	}
 
-    const employeeInfo = employees.map((employee) => ({
-      employeeId: employee.employeeId,
-      userId: employee.userId,
-      firstName: employee.firstName,
-      middleInitial: employee.middleInitial,
-      lastName: employee.lastName,
-      email: employee.email,
-      phoneNumber: employee.phoneNumber,
-      hireDate: employee.hireDate,
-      role: employee.role,
-      department: employee.department,
-      directReport: employee.directReport,
-      employmentStatus: employee.employmentStatus,
-    }));
+	static async getEmployeeById(employeeId: string): Promise<IEmployee> {
+		if (employeeId === null) {
+			throw new Error('Invalid search criteria');
+		}
 
-    return {
-      employees: employeeInfo,
-      count: employeeCount,
-    };
-  }
+		const employee = await Employee.findByPk(employeeId);
 
-  static async getEmployeeById(employeeId: string): Promise<IEmployeeInfo> {
-    if (employeeId === null) {
-      throw new Error("Invalid search criteria");
-    }
+		if (employee === null) {
+			throw new Error('No employee found');
+		}
 
-    const employee = await Employee.findByPk(employeeId);
-
-    if (employee === null) {
-      throw new Error("No employee found");
-    }
-
-    const employeeInfo = {
-      employeeId: employee.employeeId,
-      userId: employee.userId,
-      firstName: employee.firstName,
-      middleInitial: employee.middleInitial,
-      lastName: employee.lastName,
-      email: employee.email,
-      phoneNumber: employee.phoneNumber,
-      hireDate: employee.hireDate,
-      role: employee.role,
-      department: employee.department,
-      directReport: employee.directReport,
-      employmentStatus: employee.employmentStatus,
-    };
-
-    return employeeInfo;
-  }
+		return employee;
+	}
 }
