@@ -142,3 +142,8 @@ export interface IMessage {
 	body: IMessageBody;
 	submittedAt: Date;
 }
+
+export interface IMessageDirectory {
+	messages: IMessage[];
+	count: number;
+}

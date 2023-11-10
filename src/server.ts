@@ -7,12 +7,14 @@ import cors from 'cors';
 import logging from './config/logging';
 import db from './models/index';
 
+import { EmailService } from './services/emailService';
+
 import userRoutes from './routes/userRoutes';
 import employeeRoutes from './routes/employeeRoutes';
 import jobListingRoutes from './routes/jobListingRoutes';
 import jobApplicationRoutes from './routes/jobApplicationRoutes';
 import subscriberRoutes from './routes/subscriberRoutes';
-import { EmailService } from './services/emailService';
+import messageRoutes from './routes/messageRoutes';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -59,6 +61,7 @@ router.use('/api/v1/employees', employeeRoutes);
 router.use('/api/v1/job-listings', jobListingRoutes);
 router.use('/api/v1/job-applications', jobApplicationRoutes);
 router.use('/api/v1/subscribers', subscriberRoutes);
+router.use('/api/v1/messages', messageRoutes);
 
 const app = http.createServer(router);
 
