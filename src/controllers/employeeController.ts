@@ -8,9 +8,9 @@ export class EmployeeController {
 		try {
 			const currentUser = req.user.id;
 
-			const user = req.params.userId;
+			const userId = req.params.userId;
 
-			const newEmployee = await EmployeeService.createEmployee(currentUser, user, req.body);
+			const newEmployee = await EmployeeService.createEmployee(currentUser, userId, req.body);
 
 			res.status(201).json(newEmployee);
 		} catch (error: unknown) {

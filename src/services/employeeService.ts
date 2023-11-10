@@ -37,6 +37,7 @@ export class EmployeeService {
 
 		const employee = await db.Employee.create({
 			...employeeData,
+			userId: userId,
 			createdBy: createdById,
 			updatedBy: createdById,
 		});
