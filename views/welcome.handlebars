@@ -2,26 +2,37 @@
 	<head>
 		<meta charset='UTF-8' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
-		<link rel='stylesheet' href='welcome.css' />
 		<title>Welcome to the Team!</title>
+		<style type='text/css'>
+			body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
+			.container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 5px; box-shadow: 0
+			0 10px rgba(0, 0, 0, 0.1); } h2, h3 { color: #5d6975; } h2 { font-size: 22px; text-align: center; padding: 20px 0;
+			} h3 { font-size: 18px; padding: 10px 0; } p, li { font-size: 16px; line-height: 1.6; } .checklist {
+			list-style-type: none; padding: 0; } .checklist li:before { content: '✓'; margin-right: 8px; color: #6da34d; } /*
+			Mobile responsiveness */ @media (max-width: 600px) { .container { width: 100%; padding: 10px; box-shadow: none; }
+			h2 { font-size: 20px; } h3 { font-size: 16px; } p, li { font-size: 14px; } }
+		</style>
 	</head>
 	<body>
 		<div class='container'>
-			<h2>Welcome Aboard, {{name}}!</h2>
-			<p>We're thrilled to have you on board. If you have any questions, feel free to contact us at
+			<h2 style='font-size: 22px; text-align: center; padding: 20px 0; color: #5d6975;'>Welcome Aboard, {{name}}!</h2>
+			<p style='font-size: 16px; line-height: 1.6;'>We're thrilled to have you on board. If you have any questions, feel
+				free to contact us at
 				{{support_email}}.</p>
-			<h3>Onboarding Checklist</h3>
-			<ul class='checklist'>
-				<li>Set up your company email account</li>
-				<li>Complete your profile on our internal platform</li>
-				<li>Schedule your first team meeting</li>
-				<li>Read through the employee handbook</li>
+			<h3 style='font-size: 18px; padding: 10px 0; color: #5d6975;'>Onboarding Checklist</h3>
+			<ul class='checklist' style='list-style-type: none; padding: 0;'>
+				<li style='font-size: 16px; line-height: 1.6;'>Set up your company email account</li>
+				<li style='font-size: 16px; line-height: 1.6;'>Complete your profile on our internal platform</li>
+				<li style='font-size: 16px; line-height: 1.6;'>Schedule your first team meeting</li>
+				<li style='font-size: 16px; line-height: 1.6;'>Read through the employee handbook</li>
 			</ul>
-			<h3>Interesting Facts</h3>
-			<p>Did you know? Our company was founded in the year
+			<h3 style='font-size: 18px; padding: 10px 0; color: #5d6975;'>Interesting Facts</h3>
+			<p style='font-size: 16px; line-height: 1.6;'>Did you know? Our company was founded in the year
 				{{foundation_year}}
 				and has been on an incredible journey ever since!</p>
-			<p>Another fact: We have employees from over {{number_of_countries}} different countries!</p>
+			<p style='font-size: 16px; line-height: 1.6;'>Another fact: We have employees from over
+				{{number_of_countries}}
+				different countries!</p>
 		</div>
 	</body>
 </html>

@@ -32,7 +32,7 @@ export class EmailService {
 
 	static async sendEmail(email: string, subject: string, template: string, context: any): Promise<void> {
 		const mailOptions = {
-			from: `Jacob <${process.env.EMAIL_USERNAME}>`,
+			from: `Setup <${process.env.EMAIL_USERNAME}>`,
 			to: email,
 			subject: subject,
 			template: template,
