@@ -2,7 +2,7 @@ import { Model, DataTypes, Sequelize } from "sequelize";
 import { IUser } from "../interfaces/ICommon";
 
 export class User extends Model<IUser> implements IUser {
-  public userId!: string;
+  public id!: string;
   public username!: string;
   public password!: string;
   public accountType!: string;
@@ -13,7 +13,7 @@ export class User extends Model<IUser> implements IUser {
   public static initialize(sequelize: Sequelize) {
     User.init(
       {
-        userId: {
+        id: {
           type: DataTypes.UUID,
           defaultValue: DataTypes.UUIDV4,
           allowNull: false,
@@ -55,7 +55,7 @@ export class User extends Model<IUser> implements IUser {
 
   public static associate(models: any) {
     this.hasOne(models.Employee, {
-      foreignKey: "userId",
+      foreignKey: "id",
       as: "employee",
     });
   }

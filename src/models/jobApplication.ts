@@ -2,17 +2,18 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { IApplicant, IJobApplication } from '../interfaces/ICommon';
 
 export class JobApplication extends Model<IJobApplication> implements IJobApplication {
-	public jobApplicationId!: string;
+	public id!: string;
 	public jobListingId!: string;
-	public applicationDate!: Date;
-	public applicationStatus!: Enumerator;
-	public applicationSource!: Enumerator;
+	public status!: Enumerator;
+	public source!: Enumerator;
 	public applicant!: IApplicant;
+	public submittedAt!: Date;
+	public processedAt?: Date;
 
 	public static initialize(sequelize: Sequelize) {
 		JobApplication.init(
 			{
-				jobApplicationId: {
+				id: {
 					type: DataTypes.UUID,
 					defaultValue: DataTypes.UUIDV4,
 					allowNull: false,
@@ -22,18 +23,13 @@ export class JobApplication extends Model<IJobApplication> implements IJobApplic
 					type: DataTypes.UUID,
 					allowNull: false,
 				},
-				applicationDate: {
-					type: DataTypes.DATE,
-					defaultValue: DataTypes.NOW,
-					allowNull: false,
-				},
-				applicationStatus: {
+				status: {
 					type: DataTypes.ENUM,
 					values: ['new', 'archived'],
 					defaultValue: 'new',
 					allowNull: false,
 				},
-				applicationSource: {
+				source: {
 					type: DataTypes.ENUM,
 					values: ['website', 'indeed'],
 					defaultValue: 'website',
@@ -42,6 +38,15 @@ export class JobApplication extends Model<IJobApplication> implements IJobApplic
 				applicant: {
 					type: DataTypes.JSON,
 					allowNull: false,
+				},
+				submittedAt: {
+					type: DataTypes.DATE,
+					defaultValue: DataTypes.NOW,
+					allowNull: false,
+				},
+				processedAt: {
+					type: DataTypes.DATE,
+					allowNull: true,
 				},
 			},
 			{

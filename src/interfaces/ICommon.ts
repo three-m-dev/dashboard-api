@@ -1,5 +1,5 @@
 export interface IUser {
-	userId: string;
+	id: string;
 	username: string;
 	password: string;
 	accountType: string;
@@ -16,7 +16,7 @@ export interface IUserDirectory {
 }
 
 export interface IUserParams {
-	userId?: string;
+	id?: string;
 	accountType?: string;
 	isActive?: string;
 }
@@ -30,7 +30,7 @@ export interface IAddress {
 }
 
 export interface IEmployee {
-	employeeId: string;
+	id: string;
 	userId: string;
 	firstName: string;
 	middleInitial?: string;
@@ -39,14 +39,18 @@ export interface IEmployee {
 	phoneNumber?: string;
 	address: IAddress;
 	dateOfBirth?: Date;
-	hireDate: Date;
-	role: string;
+	company: Enumerator;
 	department: string;
+	role: string;
 	directReport: string;
-	employmentStatus: string;
+	status: string;
 	salary?: number;
-	endDate?: Date;
 	notes?: string;
+	createdBy: string;
+	updatedBy: string;
+	hiredAt: Date;
+	terminatedAt?: Date;
+	resignedAt?: Date;
 }
 
 export interface IEmployeeDirectory {
@@ -55,18 +59,18 @@ export interface IEmployeeDirectory {
 }
 
 export interface IJobListing {
-	jobListingId: string;
+	id: string;
 	title: string;
 	description: string;
-	company: Enumerator;
 	location: Enumerator;
+	company: Enumerator;
 	department: string;
 	employmentType: Enumerator;
 	requirements: object;
 	qualifications: object;
 	salaryRange: string;
 	benefits: object;
-	listingStatus: Enumerator;
+	status: Enumerator;
 	applicantCount: number;
 	createdBy: string;
 	updatedBy: string;
@@ -94,12 +98,13 @@ export interface IApplicant {
 }
 
 export interface IJobApplication {
-	jobApplicationId: string;
+	id: string;
 	jobListingId: string;
-	applicationDate: Date;
-	applicationStatus: Enumerator;
-	applicationSource: Enumerator;
+	status: Enumerator;
+	source: Enumerator;
 	applicant: IApplicant;
+	submittedAt: Date;
+	processedAt?: Date;
 }
 
 export interface IJobApplicationDirectory {
@@ -108,10 +113,32 @@ export interface IJobApplicationDirectory {
 }
 
 export interface ISubscriber {
-	subscriberId: string;
+	id: string;
 	email: string;
-	subscribedAt: Date;
 	isSubscribed: boolean;
 	unsubscribeToken: string;
+	subscribedAt: Date;
 	unsubscribedAt?: Date;
+}
+
+export interface ISubscriberDirectory {
+	subscribers: ISubscriber[];
+	count: number;
+}
+
+export interface IMessageBody {
+	firstName: string;
+	lastName: string;
+	company: string;
+	phoneNumber: string;
+	email: string;
+	subject: string;
+}
+
+export interface IMessage {
+	id: string;
+	status: Enumerator;
+	subject: string;
+	body: IMessageBody;
+	submittedAt: Date;
 }

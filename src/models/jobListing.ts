@@ -2,26 +2,26 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { IJobListing } from '../interfaces/ICommon';
 
 export class JobListing extends Model<IJobListing> implements IJobListing {
-	public jobListingId!: string;
+	public id!: string;
 	public title!: string;
 	public description!: string;
-	public company!: Enumerator;
 	public location!: Enumerator;
+	public company!: Enumerator;
 	public department!: string;
 	public employmentType!: Enumerator;
 	public requirements!: object;
 	public qualifications!: object;
 	public salaryRange!: string;
 	public benefits!: object;
-	public listingStatus!: Enumerator;
-	applicantCount!: number;
+	public status!: Enumerator;
+	public applicantCount!: number;
 	public createdBy!: string;
 	public updatedBy!: string;
 
 	public static initialize(sequelize: Sequelize) {
 		JobListing.init(
 			{
-				jobListingId: {
+				id: {
 					type: DataTypes.UUID,
 					defaultValue: DataTypes.UUIDV4,
 					allowNull: false,
@@ -70,7 +70,7 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
 					type: DataTypes.JSON,
 					allowNull: false,
 				},
-				listingStatus: {
+				status: {
 					type: DataTypes.ENUM,
 					values: ['open', 'closed', 'paused', 'filled', 'archived'],
 					defaultValue: 'open',
@@ -99,7 +99,7 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
 
 	public static associate(models: any) {
 		this.hasMany(models.JobApplication, {
-			foreignKey: 'jobListingId',
+			foreignKey: 'id',
 			as: 'application',
 		});
 	}

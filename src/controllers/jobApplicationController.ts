@@ -5,7 +5,7 @@ import { ExtendedRequest } from '../middleware/authMiddleware';
 export class JobApplicationController {
 	public static async createJobApplication(req: ExtendedRequest, res: Response) {
 		try {
-			const jobListingId: string = req.params.jobListingId;
+			const jobListingId = req.params.jobListingId;
 
 			const newApplication = await JobApplicationService.createJobApplication(jobListingId, req.body);
 

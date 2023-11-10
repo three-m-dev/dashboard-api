@@ -1,8 +1,8 @@
-import User from '../models/user';
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { validate } from 'uuid';
 import { IUser, IUserDirectory, IUserParams, IUserWithoutPassword } from '../interfaces/ICommon';
+import db from '../models';
 
 export class UserService {
 	static async createUser(createdById: string, userData: IUser): Promise<IUserWithoutPassword> {
@@ -14,7 +14,7 @@ export class UserService {
 			throw new Error(`Missing required field: ${missingField}`);
 		}
 
-		const existingUser = await User.findAll({
+		const existingUser = await db.User.findAll({
 			where: { username: userData.username },
 		});
 
@@ -24,7 +24,7 @@ export class UserService {
 
 		const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-		const user = await User.create({
+		const user = await db.User.create({
 			...userData,
 			password: hashedPassword,
 			createdBy: createdById,
@@ -41,7 +41,7 @@ export class UserService {
 			throw new Error('Missing credentials');
 		}
 
-		const user = await User.findOne({ where: { username } });
+		const user = await db.User.findOne({ where: { username } });
 		if (!user) {
 			throw new Error('User not found');
 		}
@@ -51,7 +51,7 @@ export class UserService {
 			throw new Error('Invalid password');
 		}
 
-		const accessToken = sign({ userId: user.userId, username: user.username }, process.env.JWT_SECRET as string, {
+		const accessToken = sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET as string, {
 			expiresIn: '24h',
 		});
 
@@ -73,7 +73,7 @@ export class UserService {
 			whereConditions.isActive = isActiveBoolean;
 		}
 
-		const users = await User.findAll({
+		const users = await db.User.findAll({
 			attributes: { exclude: ['password'] },
 			where: whereConditions,
 			order: [['username', 'ASC']],
@@ -100,7 +100,7 @@ export class UserService {
 			throw new Error('User ID is required');
 		}
 
-		const user = await User.findByPk(userId);
+		const user = await db.User.findByPk(userId);
 
 		if (user === null) {
 			throw new Error('No user found');

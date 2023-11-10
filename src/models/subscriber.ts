@@ -2,17 +2,17 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { ISubscriber } from '../interfaces/ICommon';
 
 export class Subscriber extends Model<ISubscriber> implements ISubscriber {
-	public subscriberId!: string;
+	public id!: string;
 	public email!: string;
-	public subscribedAt!: Date;
 	public isSubscribed!: boolean;
 	public unsubscribeToken!: string;
+	public subscribedAt!: Date;
 	public unsubscribedAt?: Date;
 
 	public static initialize(sequelize: Sequelize) {
 		Subscriber.init(
 			{
-				subscriberId: {
+				id: {
 					type: DataTypes.UUID,
 					defaultValue: DataTypes.UUIDV4,
 					allowNull: false,
@@ -22,11 +22,7 @@ export class Subscriber extends Model<ISubscriber> implements ISubscriber {
 					type: DataTypes.STRING,
 					allowNull: false,
 				},
-				subscribedAt: {
-					type: DataTypes.DATE,
-					defaultValue: DataTypes.NOW,
-					allowNull: false,
-				},
+
 				isSubscribed: {
 					type: DataTypes.BOOLEAN,
 					defaultValue: true,
@@ -35,6 +31,11 @@ export class Subscriber extends Model<ISubscriber> implements ISubscriber {
 				unsubscribeToken: {
 					type: DataTypes.UUID,
 					defaultValue: DataTypes.UUIDV4,
+					allowNull: false,
+				},
+				subscribedAt: {
+					type: DataTypes.DATE,
+					defaultValue: DataTypes.NOW,
 					allowNull: false,
 				},
 				unsubscribedAt: {

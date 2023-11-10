@@ -2,7 +2,7 @@ import { IEmployee, IEmployeeDirectory } from '../interfaces/ICommon';
 import db from '../models';
 
 export class EmployeeService {
-	static async createEmployee(userId: string, employeeData: IEmployee): Promise<IEmployee> {
+	static async createEmployee(createdById: string, userId: string, employeeData: IEmployee): Promise<IEmployee> {
 		const user = await db.User.findByPk(userId);
 
 		if (user === null) {
@@ -21,11 +21,12 @@ export class EmployeeService {
 			'firstName',
 			'lastName',
 			'email',
-			'hireDate',
-			'role',
+			'company',
 			'department',
+			'role',
 			'directReport',
-			'employmentStatus',
+			'status',
+			'hiredAt',
 		] as const;
 
 		const missingField = requiredFields.find((field) => !employeeData[field]);
@@ -35,23 +36,9 @@ export class EmployeeService {
 		}
 
 		const employee = await db.Employee.create({
-			employeeId: employeeData.employeeId,
-			userId: userId,
-			firstName: employeeData.firstName,
-			middleInitial: employeeData.middleInitial,
-			lastName: employeeData.lastName,
-			email: employeeData.email,
-			phoneNumber: employeeData.phoneNumber,
-			address: employeeData.address,
-			dateOfBirth: employeeData.dateOfBirth,
-			hireDate: employeeData.hireDate,
-			role: employeeData.role,
-			department: employeeData.department,
-			directReport: employeeData.directReport,
-			employmentStatus: employeeData.employmentStatus,
-			salary: employeeData.salary,
-			endDate: employeeData.endDate,
-			notes: employeeData.notes,
+			...employeeData,
+			createdBy: createdById,
+			updatedBy: createdById,
 		});
 
 		return employee;

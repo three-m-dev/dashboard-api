@@ -6,9 +6,11 @@ import { EmailService } from '../services/emailService';
 export class EmployeeController {
 	public static async createEmployee(req: ExtendedRequest, res: Response) {
 		try {
-			const userId: string = req.params.userId;
+			const currentUser = req.user.id;
 
-			const newEmployee = await EmployeeService.createEmployee(userId, req.body);
+			const user = req.params.userId;
+
+			const newEmployee = await EmployeeService.createEmployee(currentUser, user, req.body);
 
 			res.status(201).json(newEmployee);
 		} catch (error: unknown) {
