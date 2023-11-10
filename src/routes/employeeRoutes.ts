@@ -6,7 +6,9 @@ const router = Router();
 
 router.post('/create/:userId', protect, EmployeeController.createEmployee);
 
-router.post('/:employeeId/welcome-email', EmployeeController.sendWelcomeEmail);
+router.post('/:employeeId/welcome', protect, EmployeeController.sendWelcomeEmail);
+
+router.post('/:employeeId/reset', protect, EmployeeController.sendPasswordResetEmail);
 
 router.get('/:employeeId', protect, EmployeeController.getEmployeeById);
 

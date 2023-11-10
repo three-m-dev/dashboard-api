@@ -20,26 +20,6 @@ export class EmployeeController {
 		}
 	}
 
-	public static async sendWelcomeEmail(req: Request, res: Response) {
-		try {
-			const employeeId: string = req.params.employeeId;
-
-			const employee = await EmployeeService.getEmployeeById(employeeId);
-
-			const { email, firstName } = employee;
-
-			await EmailService.sendWelcomeEmail(email, firstName);
-
-			res.status(200).json({ message: 'Welcome email sent successfully!' });
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				res.status(400).json({ message: error.message });
-			} else {
-				res.status(500).json({ message: 'An unexpected error occurred' });
-			}
-		}
-	}
-
 	public static async getEmployees(req: Request, res: Response) {
 		try {
 			const employees = await EmployeeService.getEmployees();
@@ -61,6 +41,48 @@ export class EmployeeController {
 			const employee = await EmployeeService.getEmployeeById(employeeId);
 
 			res.status(200).json(employee);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
+
+	public static async sendWelcomeEmail(req: Request, res: Response) {
+		try {
+			const employeeId: string = req.params.employeeId;
+
+			const employee = await EmployeeService.getEmployeeById(employeeId);
+
+			const { email, firstName } = employee;
+
+			await EmailService.sendWelcomeEmail(email, firstName);
+
+			res.status(200).json({ message: 'Welcome email sent successfully!' });
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
+
+	public static async sendPasswordResetEmail(req: Request, res: Response) {
+		try {
+			const employeeId: string = req.params.employeeId;
+
+			const employee = await EmployeeService.getEmployeeById(employeeId);
+
+			const { email, firstName } = employee;
+
+			const resetLink = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
+			await EmailService.sendPasswordResetEmail(email, firstName, resetLink);
+
+			res.status(200).json({ message: 'Password reset email sent successfully!' });
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				res.status(400).json({ message: error.message });

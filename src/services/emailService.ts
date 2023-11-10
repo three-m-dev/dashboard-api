@@ -32,7 +32,7 @@ export class EmailService {
 
 	static async sendEmail(email: string, subject: string, template: string, context: any): Promise<void> {
 		const mailOptions = {
-			from: `Setup <${process.env.EMAIL_USERNAME}>`,
+			from: `Three M <${process.env.EMAIL_USERNAME}>`,
 			to: email,
 			subject: subject,
 			template: template,
@@ -45,14 +45,23 @@ export class EmailService {
 		}
 	}
 
-	static async sendWelcomeEmail(toEmail: string, userName: string): Promise<void> {
-		const subject = 'Welcome to Three M!';
+	static async sendWelcomeEmail(toEmail: string, firstName: string): Promise<void> {
+		const subject = 'Getting Started at Three M';
 		const template = 'welcome';
 		const context = {
-			name: userName,
-			support_email: 'support@setup123.com',
-			foundation_year: 1971,
-			number_of_countries: 50,
+			name: firstName,
+			nextTraining: '12/12/2023',
+		};
+
+		await EmailService.sendEmail(toEmail, subject, template, context);
+	}
+
+	static async sendPasswordResetEmail(toEmail: string, firstName: string, resetLink: string): Promise<void> {
+		const subject = 'Password Reset';
+		const template = 'passwordReset';
+		const context = {
+			name: firstName,
+			resetLink: resetLink,
 		};
 
 		await EmailService.sendEmail(toEmail, subject, template, context);
