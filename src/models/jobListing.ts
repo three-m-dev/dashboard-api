@@ -99,7 +99,7 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
 
 	public static associate(models: any) {
 		this.hasMany(models.JobApplication, {
-			foreignKey: 'id',
+			foreignKey: 'jobListingId',
 			as: 'application',
 		});
 	}

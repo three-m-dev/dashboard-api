@@ -132,13 +132,13 @@ export interface IMessageBody {
 	company: string;
 	phoneNumber: string;
 	email: string;
-	subject: string;
+	text: string;
 }
 
 export interface IMessage {
 	id: string;
 	status: Enumerator;
-	subject: string;
+	company: Enumerator;
 	body: IMessageBody;
 	submittedAt: Date;
 }
