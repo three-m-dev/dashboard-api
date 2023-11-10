@@ -2,37 +2,55 @@
 	<head>
 		<meta charset='UTF-8' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
-		<title>Welcome to the Team!</title>
-		<style type='text/css'>
-			body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
-			.container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 5px; box-shadow: 0
-			0 10px rgba(0, 0, 0, 0.1); } h2, h3 { color: #5d6975; } h2 { font-size: 22px; text-align: center; padding: 20px 0;
-			} h3 { font-size: 18px; padding: 10px 0; } p, li { font-size: 16px; line-height: 1.6; } .checklist {
-			list-style-type: none; padding: 0; } .checklist li:before { content: '✓'; margin-right: 8px; color: #6da34d; } /*
-			Mobile responsiveness */ @media (max-width: 600px) { .container { width: 100%; padding: 10px; box-shadow: none; }
-			h2 { font-size: 20px; } h3 { font-size: 16px; } p, li { font-size: 14px; } }
+		<title>Welcome Email</title>
+		<style>
+			body { background-color: white; color: #1b1464; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+			.container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; } .header { background-color: #1b1464;
+			color: white; padding: 10px; text-align: center; } .content, .to-do-list, .core-values { margin-top: 20px; }
+			.to-do-list ul { list-style: none; padding: 0; } .to-do-list li { margin-bottom: 10px; } .core-values {
+			background-color: #1b1464; color: white; padding: 20px; margin-top: 30px; text-align: center; } .core-values ul {
+			list-style: none; padding: 0; } .core-values li { margin-bottom: 10px; } .signature { margin-top: 30px;
+			font-style: italic; } @media screen and (max-width: 600px) { .container { width: 95%; padding: 10px; } }
 		</style>
 	</head>
 	<body>
 		<div class='container'>
-			<h2 style='font-size: 22px; text-align: center; padding: 20px 0; color: #5d6975;'>Welcome Aboard, {{name}}!</h2>
-			<p style='font-size: 16px; line-height: 1.6;'>We're thrilled to have you on board. If you have any questions, feel
-				free to contact us at
-				{{support_email}}.</p>
-			<h3 style='font-size: 18px; padding: 10px 0; color: #5d6975;'>Onboarding Checklist</h3>
-			<ul class='checklist' style='list-style-type: none; padding: 0;'>
-				<li style='font-size: 16px; line-height: 1.6;'>Set up your company email account</li>
-				<li style='font-size: 16px; line-height: 1.6;'>Complete your profile on our internal platform</li>
-				<li style='font-size: 16px; line-height: 1.6;'>Schedule your first team meeting</li>
-				<li style='font-size: 16px; line-height: 1.6;'>Read through the employee handbook</li>
-			</ul>
-			<h3 style='font-size: 18px; padding: 10px 0; color: #5d6975;'>Interesting Facts</h3>
-			<p style='font-size: 16px; line-height: 1.6;'>Did you know? Our company was founded in the year
-				{{foundation_year}}
-				and has been on an incredible journey ever since!</p>
-			<p style='font-size: 16px; line-height: 1.6;'>Another fact: We have employees from over
-				{{number_of_countries}}
-				different countries!</p>
+			<div class='header'>
+				<h1>Welcome to Three M!</h1>
+			</div>
+			<div class='content'>
+				<p>Hello {{name}},</p>
+				<p>We're excited to have you on board as a part of our team at Three M, a leading manufacturing tool and machine
+					shop. You are now a key part of a team committed to excellence, innovation, and quality.</p>
+				<p>Below, you'll find a to-do list for your first week. These steps are designed to help you get acclimated
+					quickly and start your journey with us on the right foot.</p>
+			</div>
+			<div class='to-do-list'>
+				<h2>Your First Week To-Do List</h2>
+				<ul>
+					<li>Complete your employee profile on our internal platform.</li>
+					<li>Review the employee handbook and sign the acknowledgment form.</li>
+					<li>Schedule a meeting with your team lead to discuss your role and responsibilities.</li>
+					<li>Join the introductory training sessions on {{nextTraining}}.</li>
+					<li>Set up your workspace and familiarize yourself with the tools and equipment you'll be using.</li>
+					<li>Attend the welcome meeting with HR to learn more about company policies and benefits.</li>
+				</ul>
+			</div>
+			<div class='core-values'>
+				<h2>Our Core Values</h2>
+				<ul>
+					<li>Give a Shit</li>
+					<li>Be Versatile</li>
+					<li>Create Solutions</li>
+					<li>Have Fun</li>
+				</ul>
+			</div>
+			<div class='signature'>
+				<p>Best Regards,</p>
+				<p>Three M Team</p>
+				<p><small>Please note: This is an automated message from a no-reply system. For assistance, please contact HR or
+						your team lead directly.</small></p>
+			</div>
 		</div>
 	</body>
 </html>
