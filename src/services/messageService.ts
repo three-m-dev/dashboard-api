@@ -2,8 +2,8 @@ import { IMessage, IMessageDirectory } from '../interfaces/ICommon';
 import db from '../models';
 
 export class MessageService {
-	static async createMessage(messageData: IMessage): Promise<IMessage> {
-		const message = await db.Message.create(messageData);
+	static async createMessage(data: IMessage): Promise<IMessage> {
+		const message = await db.Message.create(data);
 
 		return message;
 	}

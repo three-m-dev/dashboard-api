@@ -5,27 +5,27 @@ import { IUser, IUserDirectory, IUserParams, IUserWithoutPassword } from '../int
 import db from '../models';
 
 export class UserService {
-	static async createUser(createdById: string, userData: IUser): Promise<IUserWithoutPassword> {
+	static async createUser(createdById: string, data: IUser): Promise<IUserWithoutPassword> {
 		const requiredFields = ['username', 'password', 'accountType'] as const;
 
-		const missingField = requiredFields.find((field) => !userData[field]);
+		const missingField = requiredFields.find((field) => !data[field]);
 
 		if (missingField) {
 			throw new Error(`Missing required field: ${missingField}`);
 		}
 
 		const existingUser = await db.User.findAll({
-			where: { username: userData.username },
+			where: { username: data.username },
 		});
 
 		if (existingUser.length > 0) {
 			throw new Error('Username already exists');
 		}
 
-		const hashedPassword = await bcrypt.hash(userData.password, 10);
+		const hashedPassword = await bcrypt.hash(data.password, 10);
 
 		const user = await db.User.create({
-			...userData,
+			...data,
 			password: hashedPassword,
 			createdBy: createdById,
 			updatedBy: createdById,

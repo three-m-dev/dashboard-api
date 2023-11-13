@@ -2,7 +2,7 @@ import { IEmployee, IEmployeeDirectory } from '../interfaces/ICommon';
 import db from '../models';
 
 export class EmployeeService {
-	static async createEmployee(createdById: string, userId: string, employeeData: IEmployee): Promise<IEmployee> {
+	static async createEmployee(createdById: string, userId: string, data: IEmployee): Promise<IEmployee> {
 		const user = await db.User.findByPk(userId);
 
 		if (user === null) {
@@ -29,14 +29,14 @@ export class EmployeeService {
 			'hiredAt',
 		] as const;
 
-		const missingField = requiredFields.find((field) => !employeeData[field]);
+		const missingField = requiredFields.find((field) => !data[field]);
 
 		if (missingField) {
 			throw new Error(`Missing required field: ${missingField}`);
 		}
 
 		const employee = await db.Employee.create({
-			...employeeData,
+			...data,
 			userId: userId,
 			createdBy: createdById,
 			updatedBy: createdById,
