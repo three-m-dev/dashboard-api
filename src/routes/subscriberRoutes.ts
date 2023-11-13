@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import { SubscriberController } from '../controllers/subscriberController';
-import { protect } from '../middleware/authMiddleware';
+import { Router } from "express";
+import { SubscriberController } from "../controllers/subscriberController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post('/create', SubscriberController.createSubscriber);
+router.post("/create", SubscriberController.createSubscriber);
 
-router.put('/:subscriberId', protect);
+router.get("/", protect);
 
-router.delete('/:subscriberId', protect);
+router.get("/:subscriberId", protect);
 
-router.get('/', protect);
+router.patch("/:subscriberId", protect);
 
-router.get('/:subscriberId', protect);
+router.delete("/:subscriberId", protect);
 
 export default router;

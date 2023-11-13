@@ -158,3 +158,13 @@ export interface IMessageDirectory {
   messages: IMessage[];
   count: number;
 }
+
+export interface ICamera {
+  id: string;
+  status: Enumerator;
+  name: string;
+  ipAddress: string;
+  port: string;
+  username: string;
+  password: string;
+}

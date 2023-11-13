@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { CareerService } from "../services/careerService";
 import { ExtendedRequest } from "../middleware/authMiddleware";
-
+import { CareerService } from "../services/careerService";
 import { v4 as uuidv4 } from "uuid";
 
 export class CareerController {

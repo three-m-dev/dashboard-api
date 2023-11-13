@@ -1,21 +1,21 @@
-import { Router } from 'express';
-import { EmployeeController } from '../controllers/employeeController';
-import { protect } from '../middleware/authMiddleware';
+import { Router } from "express";
+import { EmployeeController } from "../controllers/employeeController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post('/create/:userId', protect, EmployeeController.createEmployee);
+router.post("/create/:userId", protect, EmployeeController.createEmployee);
 
-router.post('/:employeeId/welcome', protect, EmployeeController.sendWelcomeEmail);
+router.post("/:employeeId/welcome", protect, EmployeeController.sendWelcomeEmail);
 
-router.post('/:employeeId/reset', protect, EmployeeController.sendPasswordResetEmail);
+router.post("/:employeeId/reset", protect, EmployeeController.sendPasswordResetEmail);
 
-router.get('/:employeeId', protect, EmployeeController.getEmployeeById);
+router.get("/", protect, EmployeeController.getEmployees);
 
-router.put('/:employeeId', protect);
+router.get("/:employeeId", protect, EmployeeController.getEmployeeById);
 
-router.delete('/:employeeId', protect);
+router.patch("/:employeeId", protect);
 
-router.get('/', protect, EmployeeController.getEmployees);
+router.delete("/:employeeId", protect);
 
 export default router;

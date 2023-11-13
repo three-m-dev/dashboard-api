@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import { MessageController } from '../controllers/messageController';
-import { protect } from '../middleware/authMiddleware';
+import { Router } from "express";
+import { MessageController } from "../controllers/messageController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post('/create', MessageController.createMessage);
+router.post("/create", MessageController.createMessage);
 
-router.put('/:messageId', protect);
+router.get("/", protect, MessageController.getMessages);
 
-router.delete('/:messageId', protect);
+router.get("/:messageId", protect);
 
-router.get('/', protect, MessageController.getMessages);
+router.patch("/:messageId", protect);
 
-router.get('/:messageId', protect);
+router.delete("/:messageId", protect);
 
 export default router;
