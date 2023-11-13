@@ -21,6 +21,39 @@ export interface IUserParams {
   isActive?: string;
 }
 
+export interface IPermissions {
+  id: string;
+  userId: string;
+
+  // user
+  canViewUsers: boolean;
+  canAddUser: boolean;
+  canEditUser: boolean;
+  canDeleteUser: boolean;
+
+  // employee
+  canViewEmployees: boolean;
+  canAddEmployee: boolean;
+  canEditEmployee: boolean;
+  canDeleteEmployee: boolean;
+
+  // career
+  canViewCareers: boolean;
+  canAddCareer: boolean;
+  canEditCareer: boolean;
+  canDeleteCareer: boolean;
+
+  // applicant
+  canViewApplicants: boolean;
+  canEditApplicant: boolean;
+  canDeleteApplicant: boolean;
+
+  // bulletin
+  canPostBulletin: boolean;
+  canEditBulletin: boolean;
+  canDeleteBulletin: boolean;
+}
+
 export interface IAddress {
   addressLine?: string;
   city?: string;
@@ -167,4 +200,9 @@ export interface ICamera {
   port: string;
   username: string;
   password: string;
+}
+
+export interface ICameraDirectory {
+  cameras: ICamera[];
+  count: number;
 }

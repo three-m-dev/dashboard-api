@@ -1,5 +1,6 @@
 import { ICamera } from "../interfaces/ICommon";
 import db from "../models";
+import ffmpeg from "fluent-ffmpeg";
 
 export class CameraService {
   static async createcamera(data: ICamera) {
@@ -22,15 +23,15 @@ export class CameraService {
     return camera;
   }
 
-  static async validateCamera() {}
+  static async validateConnection(cameraId: string) {}
 
   static async getCameras() {}
 
-  static async getCameraById() {}
+  static async getCameraById(cameraId: string) {}
 
-  static async updateCamera() {}
+  static async updateCamera(cameraId: string) {}
 
-  static async deleteCamera() {}
+  static async deleteCamera(cameraId: string) {}
 
   static async connectCamera() {}
 

@@ -15,4 +15,6 @@ export class CameraController {
       }
     }
   }
+
+  public static async validateConnection(req: Request, res: Response) {}
 }

@@ -4,7 +4,9 @@ import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/create", CameraController.createCamera);
+router.post("/create", protect, CameraController.createCamera);
+
+router.get("/:cameraId/validate", protect, CameraController.validateConnection);
 
 router.get("/", protect);
 

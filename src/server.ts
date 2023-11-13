@@ -4,16 +4,17 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
-import logging from "./config/logging";
+import logger from "./utils/logger";
 import db from "./models/index";
 
 import { EmailService } from "./services/emailService";
 
-import userRoutes from "./routes/userRoutes";
-import employeeRoutes from "./routes/employeeRoutes";
+import cameraRoutes from "./routes/cameraRoutes";
 import careerRoutes from "./routes/careerRoutes";
-import subscriberRoutes from "./routes/subscriberRoutes";
+import employeeRoutes from "./routes/employeeRoutes";
 import messageRoutes from "./routes/messageRoutes";
+import subscriberRoutes from "./routes/subscriberRoutes";
+import userRoutes from "./routes/userRoutes";
 
 const NAMESPACE = "Server";
 const router = express();
@@ -25,17 +26,17 @@ EmailService.initializeTemplates();
 db.sequelize
   .sync()
   .then(() => {
-    logging.info(NAMESPACE, "Database synchronized");
+    logger.info(NAMESPACE, "Database synchronized");
   })
   .catch((err: Error) => {
-    logging.error(NAMESPACE, "Error synchronizing database", err);
+    logger.error(NAMESPACE, "Error synchronizing database", err);
   });
 
 router.use((req, res, next) => {
-  logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+  logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
   res.on("finish", () => {
-    logging.info(
+    logger.info(
       NAMESPACE,
       `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`
     );
@@ -50,11 +51,12 @@ router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-router.use("/api/v1/users", userRoutes);
-router.use("/api/v1/employees", employeeRoutes);
+router.use("/api/v1/cameras", cameraRoutes);
 router.use("/api/v1/careers", careerRoutes);
-router.use("/api/v1/subscribers", subscriberRoutes);
+router.use("/api/v1/employees", employeeRoutes);
 router.use("/api/v1/messages", messageRoutes);
+router.use("/api/v1/subscribers", subscriberRoutes);
+router.use("/api/v1/users", userRoutes);
 
 const app = http.createServer(router);
 
