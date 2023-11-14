@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { validate } from 'uuid';
@@ -36,7 +37,7 @@ export class UserService {
 		return userWithoutPassword;
 	}
 
-	static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
+	public static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
 		if (!username || !password) {
 			throw new Error('Missing credentials');
 		}

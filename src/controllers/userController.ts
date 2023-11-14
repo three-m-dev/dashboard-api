@@ -4,14 +4,21 @@ import { UserService } from '../services/userService';
 import { IUserParams } from '../interfaces/ICommon';
 
 export class UserController {
-	public static async createUser(req: ExtendedRequest, res: Response) {
+	public static async authUser(req: Request, res: Response) {
 		try {
-			const currentUser = req.user.id;
+			const { username, password } = req.body;
 
-			const newUser = await UserService.createUser(currentUser, req.body);
+			const authResponse = await UserService.authUser(username, password);
 
-			res.status(201).json(newUser);
-		} catch (error: unknown) {
+			res.cookie('jwt', authResponse.accessToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				maxAge: 24 * 60 * 60 * 1000,
+				sameSite: 'strict',
+			});
+
+			res.status(200).json({ message: 'Authentication successful' });
+		} catch (error) {
 			if (error instanceof Error) {
 				res.status(400).json({ message: error.message });
 			} else {
@@ -20,13 +27,39 @@ export class UserController {
 		}
 	}
 
-	public static async authUser(req: Request, res: Response) {
+	public static async logoutUser(req: Request, res: Response) {
 		try {
-			const { username, password } = req.body;
+			res.cookie('jwt', '', {
+				httpOnly: true,
+				expires: new Date(0),
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict',
+			});
 
-			const authResponse = await UserService.authUser(username, password);
+			res.status(200).json({ message: 'Logout successful' });
+		} catch (error) {
+			res.status(500).json({ message: 'An unexpected error occurred during logout' });
+		}
+	}
 
-			res.status(200).json(authResponse);
+	public static async validateSession(req: ExtendedRequest, res: Response) {
+		if (req.user) {
+			const userWithoutPassword = { ...req.user.get({ plain: true }) };
+			delete userWithoutPassword.password;
+
+			res.status(200).json({ isAuthenticated: true, user: userWithoutPassword });
+		} else {
+			res.status(401).json({ isAuthenticated: false, message: 'Not authenticated' });
+		}
+	}
+
+	public static async createUser(req: ExtendedRequest, res: Response) {
+		try {
+			const currentUser = req.user.id;
+
+			const newUser = await UserService.createUser(currentUser, req.body);
+
+			res.status(201).json(newUser);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				res.status(400).json({ message: error.message });
