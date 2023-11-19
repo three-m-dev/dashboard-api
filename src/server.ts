@@ -11,10 +11,9 @@ import { EmailService } from './services/emailService';
 
 import cameraRoutes from './routes/cameraRoutes';
 import careerRoutes from './routes/careerRoutes';
-import employeeRoutes from './routes/employeeRoutes';
 import messageRoutes from './routes/messageRoutes';
 import subscriberRoutes from './routes/subscriberRoutes';
-import userRoutes from './routes/userRoutes';
+import teamRoutes from './routes/teamRoutes';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -59,10 +58,9 @@ router.use(bodyParser.json());
 
 router.use('/api/v1/cameras', cameraRoutes);
 router.use('/api/v1/careers', careerRoutes);
-router.use('/api/v1/employees', employeeRoutes);
 router.use('/api/v1/messages', messageRoutes);
 router.use('/api/v1/subscribers', subscriberRoutes);
-router.use('/api/v1/users', userRoutes);
+router.use('/api/v1/team', teamRoutes);
 
 const app = http.createServer(router);
 
