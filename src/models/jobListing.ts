@@ -37,12 +37,12 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
 				},
 				company: {
 					type: DataTypes.ENUM,
-					values: ['three-m', 'ultra-grip'],
+					values: ['Three M', 'Ultra Grip'],
 					allowNull: false,
 				},
 				location: {
 					type: DataTypes.ENUM,
-					values: ['on-site', 'remote', 'hybrid'],
+					values: ['On Site', 'Remote', 'Hybrid'],
 					allowNull: false,
 				},
 				department: {
@@ -51,7 +51,7 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
 				},
 				employmentType: {
 					type: DataTypes.ENUM,
-					values: ['full-time', 'part-time', 'internship', 'subcontract'],
+					values: ['Full Time', 'Part Time', 'Contract', 'Intern'],
 					allowNull: false,
 				},
 				requirements: {
@@ -72,8 +72,8 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
 				},
 				status: {
 					type: DataTypes.ENUM,
-					values: ['open', 'closed', 'paused', 'filled', 'archived'],
-					defaultValue: 'open',
+					values: ['Active', 'Inactive', 'Pending', 'Filled', 'Cancelled'],
+					defaultValue: 'Active',
 					allowNull: false,
 				},
 				applicantCount: {

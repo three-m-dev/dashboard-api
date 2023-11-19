@@ -76,7 +76,8 @@ export interface ITeamMember {
 	department: string;
 	role: string;
 	directReport: string;
-	status: string;
+	type: Enumerator;
+	status: Enumerator;
 	salary?: number;
 	notes?: string;
 	createdBy: string;

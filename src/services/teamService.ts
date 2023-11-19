@@ -80,7 +80,7 @@ export class TeamService {
 			'department',
 			'role',
 			'directReport',
-			'status',
+			'type',
 			'hiredAt',
 		] as const;
 

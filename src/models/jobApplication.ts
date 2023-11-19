@@ -25,14 +25,14 @@ export class JobApplication extends Model<IJobApplication> implements IJobApplic
 				},
 				status: {
 					type: DataTypes.ENUM,
-					values: ['new', 'archived'],
-					defaultValue: 'new',
+					values: ['New', 'Reviewed', 'Contacted', 'Interviewed', 'Offered', 'Hired', 'Rejected'],
+					defaultValue: 'New',
 					allowNull: false,
 				},
 				source: {
 					type: DataTypes.ENUM,
-					values: ['website', 'indeed'],
-					defaultValue: 'website',
+					values: ['Website', 'Indeed'],
+					defaultValue: 'Website',
 					allowNull: false,
 				},
 				applicant: {

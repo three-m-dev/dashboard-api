@@ -15,7 +15,8 @@ export class TeamMember extends Model<ITeamMember> implements ITeamMember {
 	public department!: string;
 	public role!: string;
 	public directReport!: string;
-	public status!: string;
+	public type!: Enumerator;
+	public status!: Enumerator;
 	public salary?: number;
 	public notes?: string;
 	public createdBy!: string;
@@ -67,7 +68,7 @@ export class TeamMember extends Model<ITeamMember> implements ITeamMember {
 				},
 				company: {
 					type: DataTypes.ENUM,
-					values: ['three-m', 'ultra-grip'],
+					values: ['Three M', 'Ultra Grip'],
 					allowNull: false,
 				},
 				department: {
@@ -82,8 +83,15 @@ export class TeamMember extends Model<ITeamMember> implements ITeamMember {
 					type: DataTypes.STRING,
 					allowNull: false,
 				},
+				type: {
+					type: DataTypes.ENUM,
+					values: ['Full Time', 'Part Time', 'Contractor', 'Intern'],
+					allowNull: false,
+				},
 				status: {
-					type: DataTypes.STRING,
+					type: DataTypes.ENUM,
+					values: ['Active', 'Inactive', 'Terminated', 'Resigned'],
+					defaultValue: 'Active',
 					allowNull: false,
 				},
 				salary: {
