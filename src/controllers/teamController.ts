@@ -128,9 +128,9 @@ export class TeamController {
 		try {
 			const currentUser = req.user.id;
 
-			const { user: userData, employee: employeeData } = req.body;
+			const { user: userData, teamMember: teamMemberData } = req.body;
 
-			const profile = await TeamService.createProfile(currentUser, userData, employeeData);
+			const profile = await TeamService.createProfile(currentUser, userData, teamMemberData);
 
 			res.status(201).json(profile);
 		} catch (error: unknown) {
