@@ -54,9 +54,9 @@ export class User extends Model<IUser> implements IUser {
 	}
 
 	public static associate(models: any) {
-		this.hasOne(models.Employee, {
+		this.hasOne(models.TeamMember, {
 			foreignKey: 'userId',
-			as: 'employee',
+			as: 'teamMember',
 		});
 	}
 }

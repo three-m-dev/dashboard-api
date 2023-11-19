@@ -94,11 +94,11 @@ export class TeamController {
 		}
 	}
 
-	public static async getEmployees(req: Request, res: Response) {
+	public static async getTeamMembers(req: Request, res: Response) {
 		try {
-			const employees = await TeamService.getEmployees();
+			const teamMembers = await TeamService.getTeamMembers();
 
-			res.status(200).json(employees);
+			res.status(200).json(teamMembers);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				res.status(400).json({ message: error.message });
@@ -108,13 +108,13 @@ export class TeamController {
 		}
 	}
 
-	public static async getEmployeeById(req: Request, res: Response) {
+	public static async getTeamMemberById(req: Request, res: Response) {
 		try {
-			const employeeId: string = req.params.employeeId;
+			const teamMemberId: string = req.params.teamMemberId;
 
-			const employee = await TeamService.getEmployeeById(employeeId);
+			const teamMember = await TeamService.getTeamMemberById(teamMemberId);
 
-			res.status(200).json(employee);
+			res.status(200).json(teamMember);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				res.status(400).json({ message: error.message });
@@ -124,15 +124,15 @@ export class TeamController {
 		}
 	}
 
-	public static async createTeamMember(req: ExtendedRequest, res: Response) {
+	public static async createProfile(req: ExtendedRequest, res: Response) {
 		try {
 			const currentUser = req.user.id;
 
 			const { user: userData, employee: employeeData } = req.body;
 
-			const teamMember = await TeamService.createTeamMember(currentUser, userData, employeeData);
+			const profile = await TeamService.createProfile(currentUser, userData, employeeData);
 
-			res.status(201).json(teamMember);
+			res.status(201).json(profile);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				res.status(400).json({ message: error.message });
@@ -144,11 +144,11 @@ export class TeamController {
 
 	public static async sendWelcomeEmail(req: Request, res: Response) {
 		try {
-			const employeeId: string = req.params.employeeId;
+			const teamMemberId: string = req.params.teamMemberId;
 
-			const employee = await TeamService.getEmployeeById(employeeId);
+			const teamMember = await TeamService.getTeamMemberById(teamMemberId);
 
-			const { email, firstName } = employee;
+			const { email, firstName } = teamMember;
 
 			await EmailService.sendWelcomeEmail(email, firstName);
 
@@ -164,11 +164,11 @@ export class TeamController {
 
 	public static async sendPasswordResetEmail(req: Request, res: Response) {
 		try {
-			const employeeId: string = req.params.employeeId;
+			const teamMemberId: string = req.params.teamMemberId;
 
-			const employee = await TeamService.getEmployeeById(employeeId);
+			const teamMember = await TeamService.getTeamMemberById(teamMemberId);
 
-			const { email, firstName } = employee;
+			const { email, firstName } = teamMember;
 
 			const resetLink = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 

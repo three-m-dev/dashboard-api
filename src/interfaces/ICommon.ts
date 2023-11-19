@@ -62,7 +62,7 @@ export interface IAddress {
 	postalCode?: string;
 }
 
-export interface IEmployee {
+export interface ITeamMember {
 	id: string;
 	userId: string;
 	firstName: string;
@@ -86,8 +86,8 @@ export interface IEmployee {
 	resignedAt?: Date;
 }
 
-export interface IEmployeeDirectory {
-	employees: IEmployee[];
+export interface ITeamMemberDirectory {
+	teamMembers: ITeamMember[];
 	count: number;
 }
 

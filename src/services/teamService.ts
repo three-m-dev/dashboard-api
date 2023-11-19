@@ -4,8 +4,8 @@ import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { validate } from 'uuid';
 import {
-	IEmployee,
-	IEmployeeDirectory,
+	ITeamMember,
+	ITeamMemberDirectory,
 	IUser,
 	IUserDirectory,
 	IUserParams,
@@ -50,26 +50,26 @@ export class TeamService {
 		return userWithoutPassword;
 	}
 
-	// Create New Employee
-	static async createEmployee(
+	// Create New Team Member
+	static async createTeamMember(
 		createdById: string,
 		userId: string,
-		data: IEmployee,
+		data: ITeamMember,
 		options: { transaction?: Transaction } = {}
-	): Promise<IEmployee> {
+	): Promise<ITeamMember> {
 		const user = await db.User.findByPk(userId, { transaction: options.transaction });
 
 		if (user === null) {
 			throw new Error('User does not exist');
 		}
 
-		const existingEmployee = await db.Employee.findAll({
+		const existingTeamMember = await db.TeamMember.findAll({
 			where: { userId: userId },
 			transaction: options.transaction,
 		});
 
-		if (existingEmployee.length > 0) {
-			throw new Error('User already associated with an employee');
+		if (existingTeamMember.length > 0) {
+			throw new Error('User already associated with an team member');
 		}
 
 		const requiredFields = [
@@ -90,7 +90,7 @@ export class TeamService {
 			throw new Error(`Missing required field: ${missingField}`);
 		}
 
-		const employee = await db.Employee.create(
+		const teamMember = await db.TeamMember.create(
 			{
 				...data,
 				userId: userId,
@@ -100,20 +100,20 @@ export class TeamService {
 			{ transaction: options.transaction }
 		);
 
-		return employee;
+		return teamMember;
 	}
 
-	// Create New Team Member (User + Employee)
-	static async createTeamMember(createdById: string, userData: IUser, employeeData: IEmployee): Promise<any> {
+	// Create New Profile (User + Team Member)
+	static async createProfile(createdById: string, userData: IUser, teamMemberData: ITeamMember): Promise<any> {
 		return db.sequelize.transaction(async (transaction: Transaction) => {
 			const user = await this.createUser(createdById, userData, { transaction });
 
-			let employee = null;
+			let teamMember = null;
 			if (userData.accountType !== 'developer') {
-				employee = await this.createEmployee(createdById, user.id, employeeData, { transaction });
+				teamMember = await this.createTeamMember(createdById, user.id, teamMemberData, { transaction });
 			}
 
-			return { user, employee };
+			return { user, teamMember };
 		});
 	}
 
@@ -193,34 +193,34 @@ export class TeamService {
 		return userWithoutPassword;
 	}
 
-	static async getEmployees(): Promise<IEmployeeDirectory> {
-		const employees = await db.Employee.findAll({
+	static async getTeamMembers(): Promise<ITeamMemberDirectory> {
+		const teamMembers = await db.TeamMember.findAll({
 			order: [['lastName', 'ASC']],
 		});
 
-		const employeeCount: number = employees.length;
+		const teamMemberCount: number = teamMembers.length;
 
-		if (employeeCount === 0) {
-			throw new Error('No employees found');
+		if (teamMemberCount === 0) {
+			throw new Error('No team members found');
 		}
 
 		return {
-			employees: employees,
-			count: employeeCount,
+			teamMembers: teamMembers,
+			count: teamMemberCount,
 		};
 	}
 
-	static async getEmployeeById(employeeId: string): Promise<IEmployee> {
-		if (employeeId === null) {
+	static async getTeamMemberById(teamMemberId: string): Promise<ITeamMember> {
+		if (teamMemberId === null) {
 			throw new Error('Invalid search criteria');
 		}
 
-		const employee = await db.Employee.findByPk(employeeId);
+		const teamMember = await db.TeamMember.findByPk(teamMemberId);
 
-		if (employee === null) {
-			throw new Error('No employee found');
+		if (teamMember === null) {
+			throw new Error('No team member found');
 		}
 
-		return employee;
+		return teamMember;
 	}
 }

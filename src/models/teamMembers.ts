@@ -1,7 +1,7 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { IAddress, IEmployee } from '../interfaces/ICommon';
+import { IAddress, ITeamMember } from '../interfaces/ICommon';
 
-export class Employee extends Model<IEmployee> implements IEmployee {
+export class TeamMember extends Model<ITeamMember> implements ITeamMember {
 	public id!: string;
 	public userId!: string;
 	public firstName!: string;
@@ -25,7 +25,7 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 	public resignedAt?: Date;
 
 	public static initialize(sequelize: Sequelize) {
-		Employee.init(
+		TeamMember.init(
 			{
 				id: {
 					type: DataTypes.UUID,
@@ -116,7 +116,7 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 				},
 			},
 			{
-				tableName: 'employees',
+				tableName: 'teamMembers',
 				sequelize,
 			}
 		);
@@ -130,4 +130,4 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 	}
 }
 
-export default Employee;
+export default TeamMember;
