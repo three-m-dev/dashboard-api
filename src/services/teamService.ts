@@ -195,7 +195,7 @@ export class TeamService {
 
 	static async getTeamMembers(): Promise<ITeamMemberDirectory> {
 		const teamMembers = await db.TeamMember.findAll({
-			order: [['lastName', 'ASC']],
+			order: [['firstName', 'ASC']],
 		});
 
 		const teamMemberCount: number = teamMembers.length;

@@ -102,7 +102,8 @@ export interface IJobListing {
 	employmentType: Enumerator;
 	requirements: object;
 	qualifications: object;
-	salaryRange: string;
+	startingAt: string;
+	compensationType: Enumerator;
 	benefits: object;
 	status: Enumerator;
 	applicantCount: number;
