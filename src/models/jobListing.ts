@@ -52,7 +52,7 @@ export class JobListing extends Model<IJobListing> implements IJobListing {
         },
         employmentType: {
           type: DataTypes.ENUM,
-          values: ["Full Time", "Part Time", "Contract", "Intern"],
+          values: ["Full Time", "Part Time", "Contract", "Internship"],
           allowNull: false,
         },
         requirements: {

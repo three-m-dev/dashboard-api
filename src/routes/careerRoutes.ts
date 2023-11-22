@@ -7,7 +7,7 @@ const router = Router();
 // Job Listing
 router.post("/listings/create", protect, CareerController.createJobListing);
 
-router.get("/listings/", protect, CareerController.getJobListings);
+router.get("/listings/", CareerController.getJobListings);
 
 router.get("/listings/:jobListingId", protect, CareerController.getJobListingById);
 
