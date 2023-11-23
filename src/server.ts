@@ -12,8 +12,8 @@ import { EmailService } from "./services/emailService";
 import cameraRoutes from "./routes/cameraRoutes";
 import careerRoutes from "./routes/careerRoutes";
 import messageRoutes from "./routes/messageRoutes";
+import organizationRoutes from "./routes/organizationRoutes";
 import subscriberRoutes from "./routes/subscriberRoutes";
-import teamRoutes from "./routes/teamRoutes";
 
 const NAMESPACE = "Server";
 const router = express();
@@ -62,12 +62,13 @@ router.use(compression());
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
+router.use(express.static(__dirname + '/public'));
 
 router.use("/api/v1/cameras", cameraRoutes);
 router.use("/api/v1/careers", careerRoutes);
 router.use("/api/v1/messages", messageRoutes);
+router.use("/api/v1/organization", organizationRoutes);
 router.use("/api/v1/subscribers", subscriberRoutes);
-router.use("/api/v1/team", teamRoutes);
 
 const app = http.createServer(router);
 

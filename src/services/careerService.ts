@@ -1,94 +1,142 @@
-import { IJobListing, IJobListingDirectory, IResume } from '../interfaces/ICommon';
-import { IJobApplication, IJobApplicationDirectory } from '../interfaces/ICommon';
+import { Op } from 'sequelize';
+import {
+	ICareerApplication,
+	ICareerApplicationDirectory,
+	ICareerListing,
+	ICareerListingDirectory,
+	IResume,
+} from '../interfaces/ICommon';
 import db from '../models';
 import { validate } from 'uuid';
 
 export class CareerService {
-	static async createJobListing(createdById: string, data: IJobListing): Promise<IJobListing> {
-		const requiredFields = ['title', 'description'] as const;
+	static async createCareerListing(createdById: string, data: ICareerListing): Promise<ICareerListing> {
+		const { title, description } = data;
 
-		const missingField = requiredFields.find((field) => !data[field]);
+		const requiredFields = [title, description];
 
-		if (missingField) {
-			throw new Error(`Missing required field: ${missingField}`);
+		requiredFields.forEach((field) => {
+			if (!field) {
+				throw new Error(`Missing required field ${field}`);
+			}
+		});
+
+		const existingCareerListing = await db.CareerListing.findOne({
+			where: { title: title },
+		});
+
+		if (existingCareerListing) {
+			throw new Error(`Career listing with the title ${title} already exists`);
 		}
 
-		const jobListing = await db.JobListing.create({
+		const careerListing = await db.CareerListing.create({
 			...data,
 			createdBy: createdById,
 			updatedBy: createdById,
 		});
 
-		return jobListing;
+		return careerListing;
 	}
 
-	static async getJobListings(): Promise<IJobListingDirectory> {
-		const jobListings = await db.JobListing.findAll({
+	static async getCareerListings(): Promise<ICareerListingDirectory> {
+		const careerListings = await db.CareerListing.findAll({
 			order: [['createdAt', 'DESC']],
 		});
 
-		const jobListingCount = jobListings.length;
+		const careerListingCount = careerListings.length;
 
-		if (jobListings.length === 0) {
+		if (careerListingCount === 0) {
 			throw new Error('No job listings found');
 		}
 
 		return {
-			jobListings: jobListings,
-			count: jobListingCount,
+			careerListings: careerListings,
+			count: careerListingCount,
 		};
 	}
 
-	static async getJobListingById(jobListingId: string): Promise<IJobListing> {
-		if (jobListingId === null) {
-			throw new Error('Invalid search criteria');
+	static async getCareerListingById(careerListingId: string): Promise<ICareerListing> {
+		if (!validate(careerListingId)) {
+			throw new Error('Invalid career listing ID');
 		}
 
-		const jobListing = await db.JobListing.findByPk(jobListingId);
+		const careerListing = await db.CareerListing.findByPk(careerListingId);
 
-		if (jobListing === null) {
-			throw new Error('No job listing found');
+		if (careerListing === null) {
+			throw new Error('Career listing does not exist');
 		}
 
-		return jobListing;
+		return careerListing;
 	}
 
-	static async createJobApplication(jobListingId: string, data: IJobApplication): Promise<IJobApplication> {
-		if (!validate(jobListingId)) {
+	static async createCareerApplication(careerListingId: string, data: ICareerApplication): Promise<ICareerApplication> {
+		const careerListing = await db.CareerListing.findByPk(careerListingId);
+
+		if (!validate(careerListingId)) {
 			throw new Error('Invalid job listing ID');
 		}
 
-		if (!data?.applicant) {
-			throw new Error('Missing required field: applicant');
+		if (careerListing === null) {
+			throw new Error('Career listing does not exist');
+		}
+
+		const { applicant } = data;
+
+		const requiredFields = ['firstName', 'lastName', 'email', 'phoneNumber', 'resume', 'answers'] as const;
+
+		requiredFields.forEach((field) => {
+			if (!applicant[field]) {
+				throw new Error(`Missing required field: ${field}`);
+			}
+		});
+
+		const existingPhoneNumber = db.sequelize.literal(`"applicant"->>'phoneNumber' = :existingPhoneNumber`);
+		const existingEmail = db.sequelize.literal(`"applicant"->>'email' = :existingEmail`);
+
+		const existingCareerApplication = await db.CareerApplication.findOne({
+			where: {
+				[Op.or]: [existingPhoneNumber, existingEmail],
+				careerListingId: careerListingId,
+			},
+			replacements: {
+				existingPhoneNumber: applicant.phoneNumber,
+				existingEmail: applicant.email,
+			},
+		});
+
+		if (existingCareerApplication) {
+			throw new Error(
+				`Career application with the email ${applicant.email} or phone number ${applicant.phoneNumber} already exists for this listing`
+			);
 		}
 
 		const transaction = await db.sequelize.transaction();
 
-		const jobApplication = await db.JobApplication.create(
+		const careerApplication = await db.CareerApplication.create(
 			{
 				...data,
-				jobListingId: jobListingId,
+				careerListingId: careerListingId,
 			},
 			{ transaction }
 		);
 
-		const jobListing = await db.JobListing.findByPk(jobListingId);
-
-		if (jobListing === null) {
-			throw new Error('Job listing does not exist');
-		}
-
-		await jobListing.increment('applicantCount', { by: 1, transaction });
+		await careerListing.increment('applicantCount', { by: 1, transaction });
 
 		await transaction.commit();
 
-		return jobApplication;
+		return careerApplication;
 	}
 
-	static async getJobApplications(): Promise<IJobApplicationDirectory> {
-		const jobApplications = await db.JobApplication.findAll();
+	static async getCareerApplications(): Promise<ICareerApplicationDirectory> {
+		const careerApplications = await db.CareerApplication.findAll();
 
-		return { jobApplications, count: jobApplications.length };
+		const careerApplicationCount = careerApplications.length;
+
+		if (careerApplicationCount === 0) {
+			throw new Error('No career applications found');
+		}
+
+		return { careerApplications: careerApplications, count: careerApplicationCount };
 	}
 
 	static async createResume(s3Ref: string, data: IResume): Promise<IResume> {

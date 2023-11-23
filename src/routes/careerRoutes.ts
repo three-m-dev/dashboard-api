@@ -1,32 +1,32 @@
-import { Router } from "express";
-import { CareerController } from "../controllers/careerController";
-import { protect } from "../middleware/authMiddleware";
+import { Router } from 'express';
+import { CareerController } from '../controllers/careerController';
+import { protect } from '../middleware/authMiddleware';
 
 const router = Router();
 
-// Job Listing
-router.post("/listings/create", protect, CareerController.createJobListing);
+// Career Listing
+router.post('/create', protect, CareerController.createCareerListing);
 
-router.get("/listings/", CareerController.getJobListings);
+router.get('/', CareerController.getCareerListings);
 
-router.get("/listings/:jobListingId", protect, CareerController.getJobListingById);
+router.get('/:careerListingId', protect, CareerController.getCareerListingById);
 
-router.patch("/listings/:jobListingId", protect);
+router.patch('/:careerListingId', protect);
 
-router.delete("/listings/:jobListingId", protect);
+router.delete('/careerListingId', protect);
 
-// Job Application
-router.post("/applications/create/:jobListingId", CareerController.createJobApplication);
+// Career Application
+router.post('/:careerListingId/application/create', CareerController.createCareerApplication);
 
-router.get("/applications/", protect, CareerController.getJobApplications);
+router.get('/applications', protect, CareerController.getCareerApplications);
 
-router.get("/applications/:jobApplicationId", protect);
+router.get('/applications/:careerListingId', protect);
 
-router.patch("/applications/:jobApplicationId", protect);
+router.patch('/applications/:careerListingId', protect);
 
-router.delete("/applications/:jobApplicationId", protect);
+router.delete('/applications/:careerListingId', protect);
 
 // Resume
-router.post("/resumes/create", CareerController.createResume);
+router.post('/resumes/create', CareerController.createResume);
 
 export default router;

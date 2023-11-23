@@ -1,9 +1,9 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { IApplicant, IJobApplication } from '../interfaces/ICommon';
+import { IApplicant, ICareerApplication } from '../interfaces/ICommon';
 
-export class JobApplication extends Model<IJobApplication> implements IJobApplication {
+export class CareerApplication extends Model<ICareerApplication> implements ICareerApplication {
 	public id!: string;
-	public jobListingId!: string;
+	public careerListingId!: string;
 	public status!: Enumerator;
 	public source!: Enumerator;
 	public applicant!: IApplicant;
@@ -11,7 +11,7 @@ export class JobApplication extends Model<IJobApplication> implements IJobApplic
 	public processedAt?: Date;
 
 	public static initialize(sequelize: Sequelize) {
-		JobApplication.init(
+		CareerApplication.init(
 			{
 				id: {
 					type: DataTypes.UUID,
@@ -19,7 +19,7 @@ export class JobApplication extends Model<IJobApplication> implements IJobApplic
 					allowNull: false,
 					primaryKey: true,
 				},
-				jobListingId: {
+				careerListingId: {
 					type: DataTypes.UUID,
 					allowNull: false,
 				},
@@ -50,18 +50,18 @@ export class JobApplication extends Model<IJobApplication> implements IJobApplic
 				},
 			},
 			{
-				tableName: 'jobApplications',
+				tableName: 'careerApplications',
 				sequelize,
 			}
 		);
 	}
 
 	public static associate(models: any) {
-		this.belongsTo(models.JobListing, {
-			foreignKey: 'jobListingId',
-			as: 'jobListing',
+		this.belongsTo(models.CareerListing, {
+			foreignKey: 'careerListingId',
+			as: 'careerListing',
 		});
 	}
 }
 
-export default JobApplication;
+export default CareerApplication;

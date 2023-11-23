@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import { ExtendedRequest } from "../middleware/authMiddleware";
-import { TeamService } from "../services/teamService";
+import { OrganizationService } from "../services/organizationService";
 import { EmailService } from "../services/emailService";
 import { IUserParams } from "../interfaces/ICommon";
 
-export class TeamController {
+export class OrganizationController {
   public static async authUser(req: Request, res: Response) {
     try {
       const { username, password } = req.body;
 
-      const authResponse = await TeamService.authUser(username, password);
+      const authResponse = await OrganizationService.authUser(username, password);
 
       res.cookie("jwt", authResponse.accessToken, {
         httpOnly: true,
@@ -66,7 +66,7 @@ export class TeamController {
         }
       });
 
-      const users = await TeamService.getUsers(queryParams);
+      const users = await OrganizationService.getUsers(queryParams);
 
       res.status(200).json(users);
     } catch (error: unknown) {
@@ -82,7 +82,7 @@ export class TeamController {
     try {
       const userId: string = req.params.userId;
 
-      const user = await TeamService.getUserById(userId);
+      const user = await OrganizationService.getUserById(userId);
 
       res.status(200).json(user);
     } catch (error: unknown) {
@@ -96,7 +96,7 @@ export class TeamController {
 
   public static async getTeamMembers(req: Request, res: Response) {
     try {
-      const teamMembers = await TeamService.getTeamMembers();
+      const teamMembers = await OrganizationService.getTeamMembers();
 
       res.status(200).json(teamMembers);
     } catch (error: unknown) {
@@ -112,7 +112,7 @@ export class TeamController {
     try {
       const teamMemberId: string = req.params.teamMemberId;
 
-      const teamMember = await TeamService.getTeamMemberById(teamMemberId);
+      const teamMember = await OrganizationService.getTeamMemberById(teamMemberId);
 
       res.status(200).json(teamMember);
     } catch (error: unknown) {
@@ -124,15 +124,15 @@ export class TeamController {
     }
   }
 
-  public static async createProfile(req: ExtendedRequest, res: Response) {
+  public static async createUserAndTeamMember(req: ExtendedRequest, res: Response) {
     try {
       const currentUser = req.user.id;
 
       const { user: userData, teamMember: teamMemberData } = req.body;
 
-      const profile = await TeamService.createProfile(currentUser, userData, teamMemberData);
+      const userAndTeamMember = await OrganizationService.createUserAndTeamMember(currentUser, userData, teamMemberData);
 
-      res.status(201).json(profile);
+      res.status(201).json(userAndTeamMember);
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -144,9 +144,9 @@ export class TeamController {
 
   public static async createDepartment(req: Request, res: Response) {
     try {
-      const dapartmentData = req.body;
+      const departmentData = req.body;
 
-      const department = await TeamService.createDepartment(dapartmentData);
+      const department = await OrganizationService.createDepartment(departmentData);
 
       res.status(201).json(department);
     } catch (error: unknown) {
@@ -160,7 +160,7 @@ export class TeamController {
 
   public static async getDepartments(req: Request, res: Response) {
     try {
-      const departments = await TeamService.getDepartments();
+      const departments = await OrganizationService.getDepartments();
 
       res.status(200).json(departments);
     } catch (error: unknown) {
@@ -176,7 +176,7 @@ export class TeamController {
     try {
       const teamMemberId: string = req.params.teamMemberId;
 
-      const teamMember = await TeamService.getTeamMemberById(teamMemberId);
+      const teamMember = await OrganizationService.getTeamMemberById(teamMemberId);
 
       const { email, firstName } = teamMember;
 
@@ -196,7 +196,7 @@ export class TeamController {
     try {
       const teamMemberId: string = req.params.teamMemberId;
 
-      const teamMember = await TeamService.getTeamMemberById(teamMemberId);
+      const teamMember = await OrganizationService.getTeamMemberById(teamMemberId);
 
       const { email, firstName } = teamMember;
 

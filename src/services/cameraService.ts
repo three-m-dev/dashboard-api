@@ -3,18 +3,26 @@ import db from '../models';
 
 export class CameraService {
 	static async createCamera(data: ICamera) {
-		const requiredFields = ['name', 'ipAddress', 'port', 'username', 'password'] as const;
+		const { name, ipAddress, port } = data;
 
-		const missingField = requiredFields.find((field) => !data[field]);
+		const requiredFields = [name, ipAddress, port];
 
-		if (missingField) {
-			throw new Error(`Missing required field: ${missingField}`);
+		requiredFields.forEach((field) => {
+			if (!field) {
+				throw new Error(`Missing required field ${field}`);
+			}
+		});
+
+		const existingIp = await db.Camera.findOne({ where: { ipAddress } });
+
+		if (existingIp) {
+			throw new Error(`Camera with IP address ${ipAddress} already exists`);
 		}
 
-		const existingCamera = db.Camera.findAll({ where: { ipAddress: data.ipAddress, port: data.port } });
+		const existingName = await db.Camera.findOne({ where: { name } });
 
-		if (existingCamera.length > 0) {
-			throw new Error('Camera already associated with IP address & port');
+		if (existingName) {
+			throw new Error(`Camera with name ${name} already exists`);
 		}
 
 		const camera = await db.Camera.create(data);
