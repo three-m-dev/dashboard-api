@@ -135,7 +135,11 @@ export class OrganizationService {
 		return teamMember;
 	}
 
-	static async createUserAndTeamMember(createdById: string, userData: IUser, teamMemberData: ITeamMember): Promise<any> {
+	static async createUserAndTeamMember(
+		createdById: string,
+		userData: IUser,
+		teamMemberData: ITeamMember
+	): Promise<any> {
 		return db.sequelize.transaction(async (transaction: Transaction) => {
 			const user = await this.createUser(createdById, userData, { transaction });
 
@@ -205,7 +209,7 @@ export class OrganizationService {
 
 	static async getUserById(userId: string): Promise<IUserWithoutPassword> {
 		if (!validate(userId)) {
-			throw new Error('Invalid search criteria');
+			throw new Error('User ID is invalid');
 		}
 
 		if (userId === null) {
@@ -278,10 +282,6 @@ export class OrganizationService {
 		const departments = await db.Department.findAll({ order: [['name', 'ASC']] });
 
 		const departmentCount: number = departments.length;
-
-		if (departmentCount === 0) {
-			throw new Error('No departments found');
-		}
 
 		return {
 			departments: departments,

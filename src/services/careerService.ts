@@ -90,17 +90,13 @@ export class CareerService {
 			}
 		});
 
-		const existingPhoneNumber = db.sequelize.literal(`"applicant"->>'phoneNumber' = :existingPhoneNumber`);
-		const existingEmail = db.sequelize.literal(`"applicant"->>'email' = :existingEmail`);
-
 		const existingCareerApplication = await db.CareerApplication.findOne({
 			where: {
-				[Op.or]: [existingPhoneNumber, existingEmail],
+				[Op.or]: [
+					db.sequelize.literal(`applicant->>"$.phoneNumber" = '${applicant.phoneNumber}'`),
+					db.sequelize.literal(`applicant->>"$.email" = '${applicant.email}'`),
+				],
 				careerListingId: careerListingId,
-			},
-			replacements: {
-				existingPhoneNumber: applicant.phoneNumber,
-				existingEmail: applicant.email,
 			},
 		});
 
@@ -131,10 +127,6 @@ export class CareerService {
 		const careerApplications = await db.CareerApplication.findAll();
 
 		const careerApplicationCount = careerApplications.length;
-
-		if (careerApplicationCount === 0) {
-			throw new Error('No career applications found');
-		}
 
 		return { careerApplications: careerApplications, count: careerApplicationCount };
 	}
