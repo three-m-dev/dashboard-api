@@ -124,7 +124,15 @@ export class CareerService {
 	}
 
 	static async getCareerApplications(): Promise<ICareerApplicationDirectory> {
-		const careerApplications = await db.CareerApplication.findAll();
+		const careerApplications = await db.CareerApplication.findAll({
+			include: [
+				{
+					model: db.CareerListing,
+					as: 'careerListing',
+					attributes: ['title'],
+				},
+			],
+		});
 
 		const careerApplicationCount = careerApplications.length;
 
