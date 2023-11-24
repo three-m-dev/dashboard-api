@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { OrganizationController } from '../controllers/organizationService';
+import { OrganizationController } from '../controllers/organizationController';
 import { protect } from '../middleware/authMiddleware';
 
 const router = Router();
