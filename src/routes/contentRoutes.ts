@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { SubscriberController } from "../controllers/subscriberController";
+import { ContentController } from "../controllers/contentController";
 import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/create", SubscriberController.createSubscriber);
+router.post("/subscribers/create", ContentController.createSubscriber);
 
-router.get("/", protect);
+router.get("/subscribers", protect);
 
 router.get("/:subscriberId", protect);
 

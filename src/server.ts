@@ -13,7 +13,7 @@ import cameraRoutes from "./routes/cameraRoutes";
 import careerRoutes from "./routes/careerRoutes";
 import customerRoutes from "./routes/customerRoutes";
 import organizationRoutes from "./routes/organizationRoutes";
-import subscriberRoutes from "./routes/subscriberRoutes";
+import contentRoutes from "./routes/contentRoutes";
 
 const NAMESPACE = "Server";
 const router = express();
@@ -66,9 +66,9 @@ router.use(express.static(__dirname + "/public"));
 
 router.use("/api/v1/cameras", cameraRoutes);
 router.use("/api/v1/careers", careerRoutes);
+router.use("/api/v1/content", contentRoutes);
 router.use("/api/v1/customers", customerRoutes);
 router.use("/api/v1/organization", organizationRoutes);
-router.use("/api/v1/subscribers", subscriberRoutes);
 
 const app = http.createServer(router);
 
