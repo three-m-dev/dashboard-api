@@ -4,11 +4,13 @@ import db from "../models";
 
 export class ContentService {
   static async createSubscriber(data: ISubscriber): Promise<ISubscriber> {
-    if (!data.email) {
+    const { email } = data;
+
+    if (!email) {
       throw new Error("Email address is required");
     }
 
-    if ((data.email && !data.email.includes("@")) || !data.email.includes(".")) {
+    if ((email && email.includes("@")) || email.includes(".")) {
       throw new Error("Invalid email address");
     }
 
