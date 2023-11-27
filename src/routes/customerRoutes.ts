@@ -4,14 +4,14 @@ import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/inquiry/create", CustomerController.createInquiry);
+router.post("/inquiries/create", CustomerController.createInquiry);
 
-router.get("/", protect, CustomerController.getInquiries);
+router.get("/inquiries/", protect, CustomerController.getInquiries);
 
-router.get("/:inquiryId", protect);
+router.get("/inquiries/:inquiryId", protect);
 
-router.patch("/:inquiryId", protect);
+router.patch("/inquiries/:inquiryId", protect);
 
-router.delete("/:inquiryId", protect);
+router.delete("/inquiries/:inquiryId", protect);
 
 export default router;
