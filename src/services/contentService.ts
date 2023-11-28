@@ -10,7 +10,7 @@ export class ContentService {
       throw new Error("Email address is required");
     }
 
-    if ((email && email.includes("@")) || email.includes(".")) {
+    if (!email.includes("@") || !email.includes(".")) {
       throw new Error("Invalid email address");
     }
 
