@@ -4,7 +4,7 @@ import { IInquiry, IMessage } from "../interfaces/ICommon";
 export class Inquiry extends Model<IInquiry> implements IInquiry {
   public id!: string;
   public status!: Enumerator;
-  public company!: Enumerator;
+  public organization!: Enumerator;
   public message!: IMessage;
   public submittedAt!: Date;
 
@@ -23,7 +23,7 @@ export class Inquiry extends Model<IInquiry> implements IInquiry {
           allowNull: false,
           defaultValue: "new",
         },
-        company: {
+        organization: {
           type: DataTypes.ENUM,
           values: ["three-m", "ultra-grip"],
           allowNull: false,

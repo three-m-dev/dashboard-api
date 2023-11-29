@@ -3,25 +3,29 @@ import db from "../models";
 
 export class CustomerService {
   static async createInquiry(data: IInquiry): Promise<IInquiry> {
-    const { firstName, lastName, company, phoneNumber, email, body } = data.message;
+    const { name, company, email, subject, body } = data.message;
 
-    type MessageKeys = keyof typeof data.message;
-    const requiredFields: MessageKeys[] = ["firstName", "lastName", "company", "phoneNumber", "email", "body"];
+    const requiredFields = [
+      { fieldName: "name", value: name },
+      { fieldName: "company", value: company },
+      { fieldName: "email", value: email },
+      { fieldName: "subject", value: subject },
+      { fieldName: "body", value: body },
+    ];
 
-    requiredFields.forEach((fieldName) => {
-      if (!data.message[fieldName]) {
-        throw new Error(`Missing required field: ${fieldName}`);
+    requiredFields.forEach((field) => {
+      if (!field.value) {
+        throw new Error(`Missing required field: ${field.fieldName}`);
       }
     });
 
     const inquiry = await db.Inquiry.create({
       company: 1,
       message: {
-        firstName,
-        lastName,
+        name,
         company,
-        phoneNumber,
         email,
+        subject,
         body,
       },
     });

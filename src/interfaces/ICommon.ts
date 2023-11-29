@@ -184,18 +184,17 @@ export interface ISubscriberDirectory {
 }
 
 export interface IMessage {
-  firstName: string;
-  lastName: string;
+  name: string;
   company: string;
-  phoneNumber: string;
   email: string;
+  subject: string;
   body: string;
 }
 
 export interface IInquiry {
   id: string;
   status: Enumerator;
-  company: Enumerator;
+  organization: Enumerator;
   message: IMessage;
   submittedAt: Date;
 }
