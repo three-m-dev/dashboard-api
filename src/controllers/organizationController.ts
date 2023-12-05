@@ -13,9 +13,9 @@ export class OrganizationController {
 
       res.cookie("jwt", authResponse.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "lax",
+        sameSite: "none",
       });
 
       res.status(200).json({ message: "Authentication successful" });
@@ -33,8 +33,8 @@ export class OrganizationController {
       res.cookie("jwt", "", {
         httpOnly: true,
         expires: new Date(0),
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: true,
+        sameSite: "none",
       });
 
       res.status(200).json({ message: "Logout successful" });
@@ -130,7 +130,11 @@ export class OrganizationController {
 
       const { user: userData, teamMember: teamMemberData } = req.body;
 
-      const userAndTeamMember = await OrganizationService.createUserAndTeamMember(currentUser, userData, teamMemberData);
+      const userAndTeamMember = await OrganizationService.createUserAndTeamMember(
+        currentUser,
+        userData,
+        teamMemberData
+      );
 
       res.status(201).json(userAndTeamMember);
     } catch (error: unknown) {

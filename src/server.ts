@@ -1,4 +1,6 @@
-import http from "http";
+import fs from "fs";
+import path from "path";
+import https from "https";
 import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -16,9 +18,10 @@ import organizationRoutes from "./routes/organizationRoutes";
 import contentRoutes from "./routes/contentRoutes";
 
 const NAMESPACE = "Server";
-const router = express();
-const PORT: string = process.env.PORT || "3000";
+const PORT: string = process.env.PORT || "8080";
 const NODE_ENV: string = process.env.NODE_ENV || "development";
+
+const router = express();
 
 EmailService.initializeTemplates();
 
@@ -44,19 +47,6 @@ router.use((req, res, next) => {
   next();
 });
 
-// router.use(
-//   cors((req, callback) => {
-//     const origin = req.header("Origin") || "";
-
-//     const corsOptions = {
-//       origin: allowedOrigins.includes(origin),
-//       credentials: true,
-//       optionsSuccessStatus: 200,
-//     };
-
-//     callback(null, corsOptions);
-//   })
-// );
 const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 
 router.use(
@@ -85,8 +75,15 @@ router.use("/api/v1/content", contentRoutes);
 router.use("/api/v1/customers", customerRoutes);
 router.use("/api/v1/organization", organizationRoutes);
 
-const app = http.createServer(router);
+const certificatesDirectory = path.join(__dirname, "..", "certificates");
 
-app.listen(PORT, () => {
+const options = {
+  key: fs.readFileSync(path.join(certificatesDirectory, "key.pem")),
+  cert: fs.readFileSync(path.join(certificatesDirectory, "cert.pem")),
+};
+
+const server = https.createServer(options, router);
+
+server.listen(PORT, () => {
   console.log(`Application running ${NODE_ENV} mode on port ${PORT}..`);
 });
