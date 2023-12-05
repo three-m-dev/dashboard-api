@@ -20,6 +20,7 @@ const router = express();
 const PORT: string = process.env.PORT || "3000";
 const NODE_ENV: string = process.env.NODE_ENV || "development";
 
+// this is a test idk what happened 
 EmailService.initializeTemplates();
 
 db.sequelize
