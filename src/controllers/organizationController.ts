@@ -15,7 +15,7 @@ export class OrganizationController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "strict",
+        sameSite: "lax",
       });
 
       res.status(200).json({ message: "Authentication successful" });
