@@ -44,20 +44,35 @@ router.use((req, res, next) => {
   next();
 });
 
+// router.use(
+//   cors((req, callback) => {
+//     const origin = req.header("Origin") || "";
+
+//     const corsOptions = {
+//       origin: allowedOrigins.includes(origin),
+//       credentials: true,
+//       optionsSuccessStatus: 200,
+//     };
+
+//     callback(null, corsOptions);
+//   })
+// );
+const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+
 router.use(
-  cors((req, callback) => {
-    const origin = req.header("Origin") || "";
-    const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
-
-    const corsOptions = {
-      origin: allowedOrigins.includes(origin),
-      credentials: true,
-      optionsSuccessStatus: 200,
-    };
-
-    callback(null, corsOptions);
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Origin not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
+
 router.use(compression());
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
