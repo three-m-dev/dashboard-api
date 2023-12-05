@@ -14,7 +14,7 @@ const development: Config = {
   password: process.env.DB_DEVELOPMENT_PASSWORD!,
   database: process.env.DB_DEVELOPMENT_DATABASE!,
   host: process.env.DB_DEVELOPMENT_HOST!,
-  dialect: process.env.DB_DEVELOPMENT_DIALECT!,
+  dialect: "mysql",
 };
 
 const production: Config = {
@@ -22,12 +22,10 @@ const production: Config = {
   password: process.env.DB_PRODUCTION_PASSWORD!,
   database: process.env.DB_PRODUCTION_DATABASE!,
   host: process.env.DB_PRODUCTION_HOST!,
-  dialect: process.env.DB_PRODUCTION_DIALECT!,
+  dialect: "mysql",
 };
 
-const env: "development" | "production" = (process.env.NODE_ENV || "development") as
-  | "development"
-  | "production";
+const env: "development" | "production" = (process.env.NODE_ENV || "development") as "development" | "production";
 
 const config = { development, production };
 
