@@ -16,6 +16,7 @@ import {
 import db from "../models";
 
 export class OrganizationService {
+  // Authentication
   static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
     if (!username || !password) {
       throw new Error("Missing credentials");
@@ -36,6 +37,60 @@ export class OrganizationService {
     });
 
     return { accessToken };
+  }
+
+  // Users
+  static async getUsers(params: IUserParams): Promise<IUserDirectory> {
+    const { accountType, isActive } = params;
+
+    const isActiveBoolean = isActive ? isActive === "true" : undefined;
+
+    let whereConditions: any = {};
+
+    if (accountType) {
+      whereConditions.accountType = accountType;
+    }
+
+    if (isActiveBoolean !== undefined) {
+      whereConditions.isActive = isActiveBoolean;
+    }
+
+    const users = await db.User.findAll({
+      attributes: { exclude: ["password"] },
+      where: whereConditions,
+      order: [["username", "ASC"]],
+    });
+
+    const userCount = users.length;
+
+    if (userCount === 0) {
+      throw new Error("No users found");
+    }
+
+    return {
+      users: users,
+      count: userCount,
+    };
+  }
+
+  static async getUserById(userId: string): Promise<IUserWithoutPassword> {
+    if (!validate(userId)) {
+      throw new Error("User ID is invalid");
+    }
+
+    if (userId === null) {
+      throw new Error("User ID is required");
+    }
+
+    const user = await db.User.findByPk(userId);
+
+    if (user === null) {
+      throw new Error("No user found");
+    }
+
+    const { password, ...userWithoutPassword } = user.get({ plain: true });
+
+    return userWithoutPassword;
   }
 
   static async createUserAndTeamMember(createdById: string, userData: IUser, teamMemberData: ITeamMember) {
@@ -134,59 +189,6 @@ export class OrganizationService {
       await t.rollback();
       throw error;
     }
-  }
-
-  static async getUsers(params: IUserParams): Promise<IUserDirectory> {
-    const { accountType, isActive } = params;
-
-    const isActiveBoolean = isActive ? isActive === "true" : undefined;
-
-    let whereConditions: any = {};
-
-    if (accountType) {
-      whereConditions.accountType = accountType;
-    }
-
-    if (isActiveBoolean !== undefined) {
-      whereConditions.isActive = isActiveBoolean;
-    }
-
-    const users = await db.User.findAll({
-      attributes: { exclude: ["password"] },
-      where: whereConditions,
-      order: [["username", "ASC"]],
-    });
-
-    const userCount = users.length;
-
-    if (userCount === 0) {
-      throw new Error("No users found");
-    }
-
-    return {
-      users: users,
-      count: userCount,
-    };
-  }
-
-  static async getUserById(userId: string): Promise<IUserWithoutPassword> {
-    if (!validate(userId)) {
-      throw new Error("User ID is invalid");
-    }
-
-    if (userId === null) {
-      throw new Error("User ID is required");
-    }
-
-    const user = await db.User.findByPk(userId);
-
-    if (user === null) {
-      throw new Error("No user found");
-    }
-
-    const { password, ...userWithoutPassword } = user.get({ plain: true });
-
-    return userWithoutPassword;
   }
 
   static async getTeamMembers(): Promise<ITeamMemberDirectory> {
