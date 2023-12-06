@@ -7,7 +7,7 @@ import { formatEmail, formatPhoneNumber, formatUUID } from "../utils/formatter";
 
 export class OrganizationService {
   // Authentication
-  static async authUser(username: string, password: string) {
+  static async login(username: string, password: string) {
     if (!username || !password) {
       throw new Error("Missing credentials");
     }

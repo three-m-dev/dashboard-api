@@ -8,9 +8,9 @@ interface ExtendedRequest extends Request {
 }
 
 const protect = asyncHandler(async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-	if (req.cookies && req.cookies.jwt) {
+	if (req.cookies && req.cookies.token) {
 		try {
-			const token = req.cookies.jwt;
+			const token = req.cookies.token;
 
 			const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload & { userId: string };
 
