@@ -1,12 +1,5 @@
 import { Op } from "sequelize";
-import {
-  IApplication,
-  IApplicationDirectory,
-  ICareer,
-  ICareerDirectory,
-  IQueryParams,
-  IResume,
-} from "../shared/interfaces";
+import { IApplication, ICareer, IQueryParams, IResume } from "../shared/interfaces";
 import db from "../models";
 import { validate } from "uuid";
 
@@ -306,9 +299,41 @@ export class CareerService {
     };
   }
 
-  static async getResume(resumeId: string) {}
+  static async getResume(resumeId: string) {
+    if (resumeId === null || resumeId === undefined) {
+      throw new Error("Resume ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(resumeId)) {
+      throw new Error("Resume ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const resume = await db.Resume.findByPk(resumeId);
+
+    if (resume === null) {
+      throw new Error("Resume not found for the provided ID.");
+    }
+
+    return resume;
+  }
 
   static async updateResume(resumeId: string) {}
 
-  static async deleteResume(resumeId: string) {}
+  static async deleteResume(resumeId: string) {
+    if (resumeId === null || resumeId === undefined) {
+      throw new Error("Resume ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(resumeId)) {
+      throw new Error("Resume ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const resume = await db.Resume.findByPk(resumeId);
+
+    if (resume === null) {
+      throw new Error("Resume not found for the provided ID.");
+    }
+
+    await resume.destroy();
+  }
 }
