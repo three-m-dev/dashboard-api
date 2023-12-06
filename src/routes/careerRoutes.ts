@@ -7,16 +7,18 @@ const router = Router();
 // Careers
 router.post("/", protect, CareerController.createCareer);
 router.get("/", CareerController.getCareers);
+
+// Applications
+router.get("/applications", protect, CareerController.getApplications);
+router.get("/applications/:applicationId", protect, CareerController.getApplication);
+router.post("/applications/:careerId", protect, CareerController.createApplication);
+router.patch("/applications/:applicationId", protect, CareerController.updateApplication);
+router.delete("/applications/:applicationId", protect, CareerController.deleteApplication);
+
+// Careers Continued
 router.get("/:careerId", protect, CareerController.getCareer);
 router.patch("/:careerId", protect, CareerController.updateCareer);
 router.delete("/:careerId", protect, CareerController.deleteCareer);
-
-// Career Applications
-router.post("/applications/:careerId", protect, CareerController.createApplication);
-router.get("/applications", protect, CareerController.getApplications);
-router.get("/applications/:applicationId", protect, CareerController.getApplication);
-router.patch("/applications/:applicationId", protect, CareerController.updateApplication);
-router.delete("/applications/:applicationId", protect, CareerController.deleteApplication);
 
 // Resume
 router.post("/resumes", CareerController.createResume);
