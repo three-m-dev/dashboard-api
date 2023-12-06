@@ -174,7 +174,7 @@ export class OrganizationService {
       const { firstName, lastName, email, phoneNumber, company, department, role, directReport, type, hiredAt } =
         teamMemberData;
 
-      if (!firstName || !lastName || !email || !company || !department || !role || !directReport || type || hiredAt) {
+      if (!firstName || !lastName || !email || !company || !department || !role || !directReport || !type || !hiredAt) {
         throw new Error("Missing required fields");
       }
 

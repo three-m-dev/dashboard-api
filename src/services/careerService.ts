@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import { IApplication, ICareer, IQueryParams, IResume } from "../shared/interfaces";
 import db from "../models";
 import { validate } from "uuid";
+import { formatCurrency } from "../utils/formatter";
 
 export class CareerService {
   // Careers
@@ -33,21 +34,22 @@ export class CareerService {
     ) {
       throw new Error("Missing required fields");
     }
-    const existingCareerListing = await db.CareerListing.findOne({
+    const existingCareer = await db.Career.findOne({
       where: { title: title },
     });
 
-    if (existingCareerListing) {
-      throw new Error(`Career listing with the title ${title} already exists`);
+    if (existingCareer) {
+      throw new Error(`Career with the title ${title} already exists`);
     }
 
-    const careerListing = await db.CareerListing.create({
+    const career = await db.Career.create({
       ...careerData,
+      startingAt: formatCurrency(parseInt(startingAt)),
       createdBy: createdById,
       updatedBy: createdById,
     });
 
-    return careerListing;
+    return career;
   }
 
   static async getCareers(params: IQueryParams) {
@@ -123,15 +125,15 @@ export class CareerService {
   }
 
   // Applications
-  static async createApplication(careerListingId: string, applicationData: IApplication) {
-    const careerListing = await db.CareerListing.findByPk(careerListingId);
+  static async createApplication(careerId: string, applicationData: IApplication) {
+    const career = await db.Career.findByPk(careerId);
 
-    if (!validate(careerListingId)) {
+    if (!validate(careerId)) {
       throw new Error("Invalid job listing ID");
     }
 
-    if (careerListing === null) {
-      throw new Error("Career listing does not exist");
+    if (career === null) {
+      throw new Error("Career does not exist");
     }
 
     const { applicant } = applicationData;
@@ -144,17 +146,17 @@ export class CareerService {
       }
     });
 
-    const existingCareerApplication = await db.CareerApplication.findOne({
+    const existingApplication = await db.Application.findOne({
       where: {
         [Op.or]: [
           db.sequelize.literal(`applicant->>"$.phoneNumber" = '${applicant.phoneNumber}'`),
           db.sequelize.literal(`applicant->>"$.email" = '${applicant.email}'`),
         ],
-        careerListingId: careerListingId,
+        careerId: careerId,
       },
     });
 
-    if (existingCareerApplication) {
+    if (existingApplication) {
       throw new Error(
         `Career application with the email ${applicant.email} or phone number ${applicant.phoneNumber} already exists for this listing`
       );
@@ -162,19 +164,19 @@ export class CareerService {
 
     const transaction = await db.sequelize.transaction();
 
-    const careerApplication = await db.CareerApplication.create(
+    const application = await db.Application.create(
       {
         ...applicationData,
-        careerListingId: careerListingId,
+        careerId: careerId,
       },
       { transaction }
     );
 
-    await careerListing.increment("applicantCount", { by: 1, transaction });
+    await career.increment("applicantCount", { by: 1, transaction });
 
     await transaction.commit();
 
-    return careerApplication;
+    return application;
   }
 
   static async getApplications(params: IQueryParams) {
