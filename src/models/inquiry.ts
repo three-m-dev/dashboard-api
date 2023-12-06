@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-import { IInquiry, IMessage } from "../interfaces/ICommon";
+import { IInquiry, IMessage } from "../shared/interfaces";
 
 export class Inquiry extends Model<IInquiry> implements IInquiry {
   public id!: string;

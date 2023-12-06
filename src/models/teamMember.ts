@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-import { IAddress, ITeamMember } from "../interfaces/ICommon";
+import { IAddress, ITeamMember } from "../shared/interfaces";
 
 export class TeamMember extends Model<ITeamMember> implements ITeamMember {
   public id!: string;

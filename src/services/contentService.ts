@@ -1,5 +1,5 @@
 import { unsubscribe } from "diagnostics_channel";
-import { ISubscriber } from "../interfaces/ICommon";
+import { ISubscriber } from "../shared/interfaces";
 import db from "../models";
 
 export class ContentService {

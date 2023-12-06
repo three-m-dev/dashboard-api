@@ -1,30 +1,20 @@
-import { Request, Response } from "express";
-import { Transaction } from "sequelize";
 import { sign } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { validate } from "uuid";
-import {
-  IDepartment,
-  IDepartmentDirectory,
-  ITeamMember,
-  ITeamMemberDirectory,
-  IUser,
-  IUserDirectory,
-  IUserParams,
-  IUserWithoutPassword,
-} from "../interfaces/ICommon";
+import { IDepartment, ITeamMember, IUser, IQueryParams } from "../shared/interfaces";
 import db from "../models";
+import { formatEmail, formatPhoneNumber, formatUUID } from "../utils/formatter";
 
 export class OrganizationService {
   // Authentication
-  static async authUser(username: string, password: string): Promise<{ accessToken: string }> {
+  static async authUser(username: string, password: string) {
     if (!username || !password) {
       throw new Error("Missing credentials");
     }
 
     const user = await db.User.findOne({ where: { username } });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Invalid username or password");
     }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
@@ -33,32 +23,33 @@ export class OrganizationService {
     }
 
     const accessToken = sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET as string, {
-      expiresIn: "24h",
+      expiresIn: "3h",
     });
 
     return { accessToken };
   }
 
   // Users
-  static async getUsers(params: IUserParams): Promise<IUserDirectory> {
-    const { accountType, isActive } = params;
+  static async getUsers(params: IQueryParams) {
+    const { filter, sort, page, pageSize, fields } = params;
 
-    const isActiveBoolean = isActive ? isActive === "true" : undefined;
+    let whereClause = filter || {};
+    let orderClause: [string, string][] = [];
+    let limit = pageSize;
+    let offset = page && pageSize ? (page - 1) * pageSize : 0;
+    let attributes: string[] | undefined = fields;
 
-    let whereConditions: any = {};
-
-    if (accountType) {
-      whereConditions.accountType = accountType;
-    }
-
-    if (isActiveBoolean !== undefined) {
-      whereConditions.isActive = isActiveBoolean;
+    if (sort) {
+      const [field, order] = sort.split(",");
+      orderClause.push([field, order.toUpperCase()]);
     }
 
     const users = await db.User.findAll({
-      attributes: { exclude: ["password"] },
-      where: whereConditions,
-      order: [["username", "ASC"]],
+      where: whereClause,
+      order: orderClause.length > 0 ? orderClause : undefined,
+      limit,
+      offset,
+      attributes,
     });
 
     const userCount = users.length;
@@ -73,19 +64,19 @@ export class OrganizationService {
     };
   }
 
-  static async getUserById(userId: string): Promise<IUserWithoutPassword> {
-    if (!validate(userId)) {
-      throw new Error("User ID is invalid");
+  static async getUser(userId: string) {
+    if (userId === null || userId === undefined) {
+      throw new Error("User ID is required and cannot be null or undefined.");
     }
 
-    if (userId === null) {
-      throw new Error("User ID is required");
+    if (!validate(userId)) {
+      throw new Error("User ID format is invalid. Please provide a correctly formatted ID.");
     }
 
     const user = await db.User.findByPk(userId);
 
     if (user === null) {
-      throw new Error("No user found");
+      throw new Error("User not found for the provided ID.");
     }
 
     const { password, ...userWithoutPassword } = user.get({ plain: true });
@@ -93,11 +84,36 @@ export class OrganizationService {
     return userWithoutPassword;
   }
 
-  static async createUserAndTeamMember(createdById: string, userData: IUser, teamMemberData: ITeamMember) {
+  static async updateUser(userId: string) {}
+
+  static async deleteUser(userId: string) {
+    if (userId === null || userId === undefined) {
+      throw new Error("User ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(userId)) {
+      throw new Error("User ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const user = await db.User.findByPk(userId);
+
+    if (user === null) {
+      throw new Error("User not found for the provided ID.");
+    }
+
+    await user.destroy();
+  }
+
+  // Team Members
+  static async createTeamMember(createdById: string, userData: IUser, teamMemberData: ITeamMember) {
     const t = await db.sequelize.transaction();
 
     try {
       const { username, password } = userData;
+
+      if (!username || !password) {
+        throw new Error("Missing required fields");
+      }
 
       const existingUser = await db.User.findOne(
         {
@@ -155,30 +171,28 @@ export class OrganizationService {
         throw new Error("User already associated with an team member");
       }
 
-      const requiredFields = [
-        "firstName",
-        "lastName",
-        "email",
-        "company",
-        "department",
-        "role",
-        "directReport",
-        "type",
-        "hiredAt",
-      ] as const;
+      const { firstName, lastName, email, phoneNumber, company, department, role, directReport, type, hiredAt } =
+        teamMemberData;
 
-      const missingField = requiredFields.find((field) => !teamMemberData[field]);
+      if (!firstName || !lastName || !email || !company || !department || !role || !directReport || type || hiredAt) {
+        throw new Error("Missing required fields");
+      }
 
-      if (missingField) {
-        throw new Error(`Missing required field: ${missingField}`);
+      let formattedPhoneNumber: string | undefined;
+
+      if (phoneNumber) {
+        formattedPhoneNumber = formatPhoneNumber(phoneNumber);
       }
 
       const teamMember = await db.TeamMember.create(
         {
           ...teamMemberData,
           userId: user.id,
-          createdBy: createdById,
-          updatedBy: createdById,
+          email: formatEmail(email),
+          phoneNumber: formattedPhoneNumber,
+          directReport: formatUUID(directReport),
+          createdBy: formatUUID(createdById),
+          updatedBy: formatUUID(createdById),
         },
         { transaction: t }
       );
@@ -191,12 +205,29 @@ export class OrganizationService {
     }
   }
 
-  static async getTeamMembers(): Promise<ITeamMemberDirectory> {
+  static async getTeamMembers(params: IQueryParams) {
+    const { filter, sort, page, pageSize, fields } = params;
+
+    let whereClause = filter || {};
+    let orderClause: [string, string][] = [];
+    let limit = pageSize;
+    let offset = page && pageSize ? (page - 1) * pageSize : 0;
+    let attributes: string[] | undefined = fields;
+
+    if (sort) {
+      const [field, order] = sort.split(",");
+      orderClause.push([field, order.toUpperCase()]);
+    }
+
     const teamMembers = await db.TeamMember.findAll({
-      order: [["firstName", "ASC"]],
+      where: whereClause,
+      order: orderClause.length > 0 ? orderClause : undefined,
+      limit,
+      offset,
+      attributes,
     });
 
-    const teamMemberCount: number = teamMembers.length;
+    const teamMemberCount = teamMembers.length;
 
     if (teamMemberCount === 0) {
       throw new Error("No team members found");
@@ -208,21 +239,46 @@ export class OrganizationService {
     };
   }
 
-  static async getTeamMemberById(teamMemberId: string): Promise<ITeamMember> {
-    if (teamMemberId === null) {
-      throw new Error("Invalid search criteria");
+  static async getTeamMember(teamMemberId: string) {
+    if (teamMemberId === null || teamMemberId === undefined) {
+      throw new Error("Team Member ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(teamMemberId)) {
+      throw new Error("Team Member ID format is invalid. Please provide a correctly formatted ID.");
     }
 
     const teamMember = await db.TeamMember.findByPk(teamMemberId);
 
     if (teamMember === null) {
-      throw new Error("No team member found");
+      throw new Error("Team Member not found for the provided ID.");
     }
 
     return teamMember;
   }
 
-  static async createDepartment(departmentData: IDepartment): Promise<IDepartment> {
+  static async updateTeamMember(teamMemberId: string) {}
+
+  static async deleteTeamMember(teamMemberId: string) {
+    if (teamMemberId === null || teamMemberId === undefined) {
+      throw new Error("Team Member ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(teamMemberId)) {
+      throw new Error("Team Member ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const teamMember = await db.TeamMember.findByPk(teamMemberId);
+
+    if (teamMember === null) {
+      throw new Error("Team Member not found for the provided ID.");
+    }
+
+    await teamMember.destroy();
+  }
+
+  // Departments
+  static async createDepartment(departmentData: IDepartment) {
     if (!departmentData.name) {
       throw new Error("Department name is required");
     }
@@ -242,7 +298,7 @@ export class OrganizationService {
     return department;
   }
 
-  static async getDepartments(): Promise<IDepartmentDirectory> {
+  static async getDepartments() {
     const departments = await db.Department.findAll({ order: [["name", "ASC"]] });
 
     const departmentCount: number = departments.length;
@@ -251,5 +307,43 @@ export class OrganizationService {
       departments: departments,
       count: departmentCount,
     };
+  }
+
+  static async getDepartment(departmentId: string) {
+    if (departmentId === null || departmentId === undefined) {
+      throw new Error("Department ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(departmentId)) {
+      throw new Error("Department ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const department = await db.Department.findByPk(departmentId);
+
+    if (department === null) {
+      throw new Error("Department not found for the provided ID.");
+    }
+
+    return department;
+  }
+
+  static async updateDepartment(departmentId: string) {}
+
+  static async deleteDepartment(departmentId: string) {
+    if (departmentId === null || departmentId === undefined) {
+      throw new Error("Department ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(departmentId)) {
+      throw new Error("Department ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const department = await db.Department.findByPk(departmentId);
+
+    if (department === null) {
+      throw new Error("Department not found for the provided ID.");
+    }
+
+    await department.destroy();
   }
 }

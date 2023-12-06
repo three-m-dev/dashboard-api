@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-import { IResume } from "../interfaces/ICommon";
+import { IResume } from "../shared/interfaces";
 
 export class Resume extends Model<IResume> implements IResume {
   public id!: string;

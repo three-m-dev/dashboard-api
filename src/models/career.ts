@@ -1,7 +1,7 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-import { ICareerListing } from "../interfaces/ICommon";
+import { ICareer } from "../shared/interfaces";
 
-export class CareerListing extends Model<ICareerListing> implements ICareerListing {
+export class Career extends Model<ICareer> implements ICareer {
   public id!: string;
   public title!: string;
   public description!: string;
@@ -9,7 +9,7 @@ export class CareerListing extends Model<ICareerListing> implements ICareerListi
   public company!: Enumerator;
   public department!: string;
   public employmentType!: Enumerator;
-  public requirements!: object;
+  public responsibilities!: object;
   public qualifications!: object;
   public startingAt!: string;
   public compensationType!: Enumerator;
@@ -20,7 +20,7 @@ export class CareerListing extends Model<ICareerListing> implements ICareerListi
   public updatedBy!: string;
 
   public static initialize(sequelize: Sequelize) {
-    CareerListing.init(
+    Career.init(
       {
         id: {
           type: DataTypes.UUID,
@@ -55,7 +55,7 @@ export class CareerListing extends Model<ICareerListing> implements ICareerListi
           values: ["full-time", "part-time", "contract", "internship"],
           allowNull: false,
         },
-        requirements: {
+        responsibilities: {
           type: DataTypes.JSON,
           allowNull: false,
         },
@@ -97,18 +97,18 @@ export class CareerListing extends Model<ICareerListing> implements ICareerListi
         },
       },
       {
-        tableName: "careerListings",
+        tableName: "careers",
         sequelize,
       }
     );
   }
 
   public static associate(models: any) {
-    this.hasMany(models.CareerApplication, {
-      foreignKey: "careerListingId",
+    this.hasMany(models.Application, {
+      foreignKey: "careerId",
       as: "application",
     });
   }
 }
 
-export default CareerListing;
+export default Career;

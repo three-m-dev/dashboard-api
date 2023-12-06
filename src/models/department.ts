@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
-import { IDepartment } from "../interfaces/ICommon";
+import { IDepartment } from "../shared/interfaces";
 
 export class Department extends Model<IDepartment> implements IDepartment {
   public id!: string;

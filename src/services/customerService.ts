@@ -1,4 +1,4 @@
-import { IInquiry, IInquiryDirectory } from "../interfaces/ICommon";
+import { IInquiry, IInquiryDirectory } from "../shared/interfaces";
 import db from "../models";
 
 export class CustomerService {
