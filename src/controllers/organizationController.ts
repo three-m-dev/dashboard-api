@@ -196,6 +196,22 @@ export class OrganizationController {
     }
   }
 
+  public static async getTeamMemberByUserId(req: Request, res: Response) {
+    try {
+      const userId: string = req.params.userId;
+
+      const teamMember = await OrganizationService.getTeamMemberByUserId(userId);
+
+      res.status(200).json(teamMember);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "An unexpected error occurred" });
+      }
+    }
+  }
+
   public static async updateTeamMember(req: Request, res: Response) {
     try {
       const teamMemberId: string = req.params.teamMemberId;

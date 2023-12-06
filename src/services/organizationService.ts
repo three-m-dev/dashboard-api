@@ -257,6 +257,24 @@ export class OrganizationService {
     return teamMember;
   }
 
+  static async getTeamMemberByUserId(userId: string) {
+    if (userId === null || userId === undefined) {
+      throw new Error("User ID is required and cannot be null or undefined.");
+    }
+
+    if (!validate(userId)) {
+      throw new Error("User ID format is invalid. Please provide a correctly formatted ID.");
+    }
+
+    const teamMember = await db.TeamMember.findOne({ where: { userId: userId } });
+
+    if (teamMember === null) {
+      throw new Error("Team Member not found for the provided ID.");
+    }
+
+    return teamMember;
+  }
+
   static async updateTeamMember(teamMemberId: string) {}
 
   static async deleteTeamMember(teamMemberId: string) {
