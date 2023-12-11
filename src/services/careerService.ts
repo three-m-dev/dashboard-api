@@ -181,14 +181,22 @@ export class CareerService {
     const { filter, sort, page, pageSize, fields } = params;
 
     let whereClause = filter || {};
-    let orderClause: [string, string][] = [];
+    let orderClause;
     let limit = pageSize;
     let offset = page && pageSize ? (page - 1) * pageSize : 0;
     let attributes: string[] | undefined = fields;
 
     if (sort) {
       const [field, order] = sort.split(",");
-      orderClause.push([field, order.toUpperCase()]);
+      if (field.startsWith("applicant.")) {
+        const fieldName = field.split(".")[1];
+        // Using raw SQL for sorting by a nested JSON field in MySQL
+        orderClause = db.Sequelize.literal(
+          `JSON_UNQUOTE(JSON_EXTRACT(applicant, '$.${fieldName}')) ${order.toUpperCase()}`
+        );
+      } else {
+        orderClause = [[field, order.toUpperCase()]];
+      }
     }
 
     const applications = await db.Application.findAll({
@@ -198,9 +206,10 @@ export class CareerService {
           as: "career",
           attributes: ["title"],
         },
+        // Include other models if necessary
       ],
       where: whereClause,
-      order: orderClause.length > 0 ? orderClause : undefined,
+      order: orderClause ? [orderClause] : undefined,
       limit,
       offset,
       attributes,
