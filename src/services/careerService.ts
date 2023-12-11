@@ -74,15 +74,13 @@ export class CareerService {
       attributes,
     });
 
-    const careerCount = careers.length;
-
-    if (careerCount === 0) {
-      throw new Error("No careers found");
-    }
+    const totalCount = await db.Career.count({ where: whereClause });
+    const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 0;
 
     return {
-      careers: careers,
-      count: careerCount,
+      careers,
+      totalCount,
+      totalPages,
     };
   }
 
