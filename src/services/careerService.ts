@@ -206,9 +206,14 @@ export class CareerService {
       attributes,
     });
 
-    const applicationCount = applications.length;
+    const totalCount = await db.Application.count({ where: whereClause });
+    const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 0;
 
-    return { applications: applications, count: applicationCount };
+    return {
+      applications,
+      totalCount,
+      totalPages,
+    };
   }
 
   static async getApplication(applicationId: string) {

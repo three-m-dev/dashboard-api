@@ -137,9 +137,13 @@ export class CareerController {
         fields: fieldsArray as string[] | undefined,
       };
 
-      const applications = await CareerService.getApplications(params);
+      const result = await CareerService.getApplications(params);
 
-      res.status(200).json(applications);
+      res.status(200).json({
+        applications: result.applications,
+        totalCareers: result.totalCount,
+        totalPages: result.totalPages,
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
