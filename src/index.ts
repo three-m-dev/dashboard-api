@@ -12,6 +12,7 @@ import userRoutes from './routes/userRoutes';
 import employeeRoutes from './routes/employeeRoutes';
 import jobRoutes from './routes/jobRoutes';
 import applicantRoutes from './routes/applicantRoutes';
+import applicationRoutes from './routes/applicationRoutes';
 
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';
@@ -64,6 +65,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/employees', employeeRoutes);
 app.use('/api/v1/jobs', jobRoutes);
 app.use('/api/v1/applicants', applicantRoutes);
+app.use('/api/v1/applications', applicationRoutes);
 
 const server = http.createServer(app);
 
