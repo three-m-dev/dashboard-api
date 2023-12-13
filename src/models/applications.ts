@@ -1,5 +1,5 @@
-import { Model, DataTypes, Sequelize } from "sequelize";
-import { IApplication, IRating } from "../shared/interfaces";
+import { Model, DataTypes, Sequelize } from 'sequelize';
+import { IApplication, IRating } from '../shared/interfaces';
 
 export class Application extends Model<IApplication> implements IApplication {
   public id!: string;
@@ -10,7 +10,6 @@ export class Application extends Model<IApplication> implements IApplication {
   public status!: Enumerator;
   public notes?: string;
   public ratings?: IRating[];
-  public submittedAt!: Date;
 
   public static initialize(sequelize: Sequelize) {
     Application.init(
@@ -39,7 +38,7 @@ export class Application extends Model<IApplication> implements IApplication {
         },
         status: {
           type: DataTypes.ENUM,
-          values: ["new", "reviewed", "offered", "accepted", "rejected", "withdrawn", "archived"],
+          values: ['new', 'reviewed', 'offered', 'accepted', 'rejected', 'withdrawn', 'archived'],
           allowNull: false,
         },
         notes: {
@@ -50,13 +49,9 @@ export class Application extends Model<IApplication> implements IApplication {
           type: DataTypes.JSON,
           allowNull: true,
         },
-        submittedAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
       },
       {
-        tableName: "applications",
+        tableName: 'applications',
         sequelize,
       }
     );
