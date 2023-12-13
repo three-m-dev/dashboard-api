@@ -56,6 +56,13 @@ export class Application extends Model<IApplication> implements IApplication {
       }
     );
   }
+
+  public static associate(models: any) {
+    this.belongsTo(models.Applicant, {
+      foreignKey: 'applicantId',
+      as: 'applicant',
+    });
+  }
 }
 
 export default Application;
