@@ -181,6 +181,6 @@ export class EmployeeService {
 
     await employee.destroy();
 
-    return employee;
+    return;
   }
 }
