@@ -1,5 +1,5 @@
-import { Model, DataTypes, Sequelize } from "sequelize";
-import { IApplicant } from "../shared/interfaces";
+import { Model, DataTypes, Sequelize } from 'sequelize';
+import { IApplicant } from '../shared/interfaces';
 
 export class Applicant extends Model<IApplicant> implements IApplicant {
   public id!: string;
@@ -55,10 +55,17 @@ export class Applicant extends Model<IApplicant> implements IApplicant {
         },
       },
       {
-        tableName: "applicants",
+        tableName: 'applicants',
         sequelize,
       }
     );
+  }
+
+  public static associate(models: any) {
+    this.hasMany(models.Application, {
+      foreignKey: 'applicantId',
+      as: 'applications',
+    });
   }
 }
 
