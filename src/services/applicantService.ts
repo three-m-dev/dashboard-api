@@ -3,7 +3,7 @@ import db from '../models';
 import { IApplicant, IQueryParams } from '../shared/interfaces';
 
 export class ApplicantService {
-  public async createApplicant(applicantData: IApplicant) {
+  public async createApplicant(applicantData: IApplicant, transaction?: any) {
     if (!applicantData.firstName) {
       throw new Error('First name is required');
     }
@@ -21,9 +21,8 @@ export class ApplicantService {
     }
 
     const existingApplicant = await db.Applicant.findOne({
-      where: {
-        [Op.or]: [{ email: applicantData.email }, { phone: applicantData.phone }],
-      },
+      where: { [Op.or]: [{ email: applicantData.email }, { phone: applicantData.phone }] },
+      transaction,
     });
 
     if (existingApplicant) {
@@ -34,12 +33,12 @@ export class ApplicantService {
       throw new Error('Resume upload and link cannot both be empty');
     }
 
-    const applicant = await db.Applicant.create(applicantData);
+    const applicant = await db.Applicant.create(applicantData, { transaction });
 
     return applicant;
   }
 
-  public async getApplicants(params: IQueryParams) {
+  public async getApplicants(params: IQueryParams, transaction?: any) {
     const { filter, sort, page, pageSize, fields } = params;
 
     let whereClause = filter || {};
@@ -64,17 +63,18 @@ export class ApplicantService {
       limit,
       offset,
       attributes,
+      transaction,
     });
 
-    const total = await db.Applicant.count({ where: whereClause });
+    const total = await db.Applicant.count({ where: whereClause, transaction });
 
     const pages = limit ? Math.ceil(total / limit) : 0;
 
     return { applicants, total, pages };
   }
 
-  public async getApplicant(applicantId: string) {
-    const applicant = await db.Applicant.findOne({ where: { id: applicantId } });
+  public async getApplicant(applicantId: string, transaction?: any) {
+    const applicant = await db.Applicant.findOne({ where: { id: applicantId }, transaction });
 
     if (!applicant) {
       throw new Error('Applicant not found');
@@ -83,20 +83,20 @@ export class ApplicantService {
     return applicant;
   }
 
-  public async deleteApplicant(applicantId: string) {
-    const applicant = await db.Applicant.findOne({ where: { id: applicantId } });
+  public async deleteApplicant(applicantId: string, transaction?: any) {
+    const applicant = await db.Applicant.findOne({ where: { id: applicantId }, transaction });
 
     if (!applicant) {
       throw new Error('Applicant not found');
     }
 
-    const applications = await db.Application.findAll({ where: { applicantId: applicantId } });
+    const applications = await db.Application.findAll({ where: { applicantId }, transaction });
 
     if (applications.length > 0) {
       throw new Error('Applicant is associated with 1 or more applications');
     }
 
-    await applicant.destroy();
+    await applicant.destroy({ transaction });
 
     return;
   }
