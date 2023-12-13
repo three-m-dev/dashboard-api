@@ -125,13 +125,15 @@ export class JobService {
     return { job };
   }
 
-  public async deleteJob(id: string) {
-    const job = await db.Job.findOne({ where: { id } });
+  public async deleteJob(jobId: string) {
+    const job = await db.Job.findOne({ where: { jobId } });
 
     if (!job) {
       throw new Error('Job not found');
     }
 
-    await db.Job.destroy({ where: { id } });
+    await job.destroy();
+
+    return;
   }
 }
