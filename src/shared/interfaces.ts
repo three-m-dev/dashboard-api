@@ -29,7 +29,6 @@ export interface IApplication extends ICommon {
   status: Enumerator;
   notes?: string;
   ratings?: IRating[];
-  submittedAt: Date;
 }
 
 export interface ICompany extends ICommon {
@@ -105,4 +104,4 @@ export interface IUser extends ICommon {
   isActive: boolean;
 }
 
-export interface IUserWithoutPassword extends Omit<IUser, "password"> {}
+export interface IUserWithoutPassword extends Omit<IUser, 'password'> {}
