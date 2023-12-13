@@ -1,23 +1,23 @@
-import { Op } from "sequelize";
-import db from "../models";
-import { IQueryParams, IApplicant } from "../shared/interfaces";
+import { Op } from 'sequelize';
+import db from '../models';
+import { IApplicant, IQueryParams } from '../shared/interfaces';
 
 export class ApplicantService {
   public async createApplicant(applicantData: IApplicant) {
     if (!applicantData.firstName) {
-      throw new Error("First name is required");
+      throw new Error('First name is required');
     }
 
     if (!applicantData.lastName) {
-      throw new Error("Last name is required");
+      throw new Error('Last name is required');
     }
 
     if (!applicantData.email) {
-      throw new Error("Email address is required");
+      throw new Error('Email address is required');
     }
 
     if (!applicantData.phone) {
-      throw new Error("Phone number is required");
+      throw new Error('Phone number is required');
     }
 
     const existingApplicant = await db.Applicant.findOne({
@@ -27,11 +27,11 @@ export class ApplicantService {
     });
 
     if (existingApplicant) {
-      throw new Error("Email or phone number already associated with an applicant");
+      throw new Error('Email or phone number already associated with an applicant');
     }
 
     if (!applicantData.resumeRef && !applicantData.resumeLink) {
-      throw new Error("Resume upload and link cannot both be empty");
+      throw new Error('Resume upload and link cannot both be empty');
     }
 
     const applicant = await db.Applicant.create(applicantData);
@@ -49,7 +49,7 @@ export class ApplicantService {
     let attributes: string[] | undefined = fields;
 
     if (sort) {
-      const [field, order] = sort.split(",");
+      const [field, order] = sort.split(',');
       orderClause.push([field, order.toUpperCase()]);
     }
 
@@ -77,7 +77,7 @@ export class ApplicantService {
     const applicant = await db.Applicant.findOne({ where: { id: applicantId } });
 
     if (!applicant) {
-      throw new Error("Applicant not found");
+      throw new Error('Applicant not found');
     }
 
     return applicant;
@@ -87,13 +87,13 @@ export class ApplicantService {
     const applicant = await db.Applicant.findOne({ where: { id: applicantId } });
 
     if (!applicant) {
-      throw new Error("Applicant not found");
+      throw new Error('Applicant not found');
     }
 
     const applications = await db.Application.findAll({ where: { applicantId: applicantId } });
 
     if (applications.length > 0) {
-      throw new Error("Applicant is associated with 1 or more applications");
+      throw new Error('Applicant is associated with 1 or more applications');
     }
 
     await applicant.destroy();

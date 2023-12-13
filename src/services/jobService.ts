@@ -1,5 +1,5 @@
 import db from '../models';
-import { IQueryParams, IJob } from '../shared/interfaces';
+import { IJob, IQueryParams } from '../shared/interfaces';
 
 export class JobService {
   public async createJob(currentUserId: string, jobData: IJob) {
