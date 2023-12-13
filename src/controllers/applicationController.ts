@@ -7,8 +7,6 @@ export class ApplicationController {
     try {
       const { applicant: applicantData, application: applicationData } = req.body;
 
-      console.log(req.body);
-
       const applicationService = new ApplicationService();
 
       const response = await applicationService.createApplication(applicantData, applicationData);
