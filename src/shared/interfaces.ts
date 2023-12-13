@@ -90,7 +90,6 @@ export interface IQueryParams {
 }
 
 export interface IRating extends ICommon {
-  type: Enumerator;
   value: number;
   notes?: string;
   createdBy: string;
