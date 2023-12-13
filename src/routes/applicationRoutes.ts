@@ -12,4 +12,8 @@ router.get('/', protect, applicationController.getApplications);
 
 router.get('/:applicationId', protect, applicationController.getApplication);
 
+router.patch('/:applicationId', protect, applicationController.updateApplication);
+
+router.delete('/:applicationId', protect, applicationController.deleteApplication);
+
 export default router;
