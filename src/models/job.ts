@@ -3,8 +3,8 @@ import { IJob } from '../shared/interfaces';
 
 export class Job extends Model<IJob> implements IJob {
 	public id!: string;
-	public companyId!: string;
 	public departmentId!: string;
+	public company!: Enumerator;
 	public title!: string;
 	public description!: string;
 	public location!: Enumerator;
@@ -30,12 +30,13 @@ export class Job extends Model<IJob> implements IJob {
 					allowNull: false,
 					primaryKey: true,
 				},
-				companyId: {
+				departmentId: {
 					type: DataTypes.UUID,
 					allowNull: false,
 				},
-				departmentId: {
-					type: DataTypes.UUID,
+				company: {
+					type: DataTypes.ENUM,
+					values: ['three-m', 'ultra-grip'],
 					allowNull: false,
 				},
 				title: {
@@ -48,7 +49,7 @@ export class Job extends Model<IJob> implements IJob {
 				},
 				location: {
 					type: DataTypes.ENUM,
-					values: ['onsite', 'remote'],
+					values: ['on-site', 'remote'],
 					allowNull: false,
 				},
 				type: {

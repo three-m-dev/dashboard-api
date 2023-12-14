@@ -62,8 +62,8 @@ export interface IEmployee extends ICommon {
 }
 
 export interface IJob extends ICommon {
-  companyId: string;
   departmentId: string;
+  company: Enumerator;
   title: string;
   description: string;
   location: Enumerator;
