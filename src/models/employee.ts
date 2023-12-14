@@ -4,6 +4,8 @@ import { IEmployee } from '../shared/interfaces';
 export class Employee extends Model<IEmployee> implements IEmployee {
 	public id!: string;
 	public userId!: string;
+	public departmentId!: string;
+	public directReportId!: string;
 	public firstName!: string;
 	public lastName!: string;
 	public email?: string;
@@ -11,8 +13,7 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 	public addressId?: string;
 	public birthDate?: Date;
 	public title!: string;
-	public departmentId!: string;
-	public directReportId!: string;
+	public company!: Enumerator;
 	public type!: Enumerator;
 	public status!: Enumerator;
 	public startDate!: Date;
@@ -31,6 +32,14 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 					primaryKey: true,
 				},
 				userId: {
+					type: DataTypes.UUID,
+					allowNull: false,
+				},
+				departmentId: {
+					type: DataTypes.UUID,
+					allowNull: false,
+				},
+				directReportId: {
 					type: DataTypes.UUID,
 					allowNull: false,
 				},
@@ -62,12 +71,9 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 					type: DataTypes.STRING,
 					allowNull: false,
 				},
-				departmentId: {
-					type: DataTypes.UUID,
-					allowNull: false,
-				},
-				directReportId: {
-					type: DataTypes.UUID,
+				company: {
+					type: DataTypes.ENUM('three-m', 'ultra-grip'),
+					defaultValue: 'three-m',
 					allowNull: false,
 				},
 				type: {
@@ -112,6 +118,11 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 		this.belongsTo(models.User, {
 			foreignKey: 'userId',
 			as: 'user',
+		});
+
+		this.belongsTo(models.Department, {
+			foreignKey: 'departmentId',
+			as: 'department',
 		});
 	}
 }

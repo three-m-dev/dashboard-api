@@ -4,6 +4,24 @@ import { UserService } from '../services/userService';
 import { IQueryParams } from '../shared/interfaces';
 
 export class UserController {
+	public async createDevOrAdminUser(req: Request, res: Response) {
+		try {
+			const userData = req.body;
+
+			const userService = new UserService();
+
+			const response = await userService.createDevOrAdminUser(userData);
+
+			res.status(201).json(response);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				res.status(400).json({ message: error.message });
+			} else {
+				res.status(500).json({ message: 'An unexpected error occurred' });
+			}
+		}
+	}
+
 	public async getUsers(req: Request, res: Response) {
 		try {
 			const { filter, sort, page, pageSize, fields } = req.query;

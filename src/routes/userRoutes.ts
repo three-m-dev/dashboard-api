@@ -12,6 +12,8 @@ router.post('/logout', protect, userController.logout);
 
 router.get('/session', protect, userController.session);
 
+router.post('/dev', userController.createDevOrAdminUser);
+
 router.get('/', protect, userController.getUsers);
 
 router.get('/:userId', protect, userController.getUser);
