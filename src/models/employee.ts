@@ -82,7 +82,7 @@ export class Employee extends Model<IEmployee> implements IEmployee {
 					allowNull: false,
 				},
 				status: {
-					type: DataTypes.ENUM('active', 'inactive', 'terminated'),
+					type: DataTypes.ENUM('active', 'inactive'),
 					defaultValue: 'active',
 					allowNull: false,
 				},
