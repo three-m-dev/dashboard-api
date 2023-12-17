@@ -109,6 +109,13 @@ export class Job extends Model<IJob> implements IJob {
 			}
 		);
 	}
+
+	public static associate(models: any) {
+		this.hasMany(models.Job, {
+			foreignKey: 'jobId',
+			as: 'applications',
+		});
+	}
 }
 
 export default Job;
