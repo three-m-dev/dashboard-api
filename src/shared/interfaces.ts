@@ -105,3 +105,16 @@ export interface IUser extends ICommon {
 }
 
 export interface IUserWithoutPassword extends Omit<IUser, 'password'> {}
+
+export interface IProductionLog extends ICommon {
+	weekOf: Date;
+	projectedOutput: number;
+	actualOutput: number;
+	outputGoal: number;
+	quotedHours?: number;
+	actualHours?: number;
+	indirectHours?: number;
+	notes?: string;
+	createdBy: string;
+	updatedBy?: string;
+}
