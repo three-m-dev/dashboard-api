@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { parse, format } from 'date-fns';
 import db from '../models';
-import { IDowntimeEntry, IDowntimeFilter, IQueryParams } from '../shared/interfaces';
+import { IDowntimeEntry, IDowntimeFilter, IDowntimeReport, IQueryParams } from '../shared/interfaces';
 
 export class DowntimeService {
   public async createdDowntimeEntry(currentUserId: string, downtimeData: IDowntimeEntry) {
@@ -25,7 +25,7 @@ export class DowntimeService {
 
     const existingEntry = await db.DowntimeEntry.findOne({
       where: {
-        date: downtimeData.date,
+        date: formattedDate,
         operatorId: downtimeData.operatorId,
       },
     });
@@ -57,21 +57,22 @@ export class DowntimeService {
       orderClause.push([field, order.toUpperCase()]);
     }
 
-    // Check if filter contains a dateRange
     if (filter?.dateRange) {
+      const dateFormat = 'MM/dd/yyyy';
       if (filter.dateRange.start && filter.dateRange.end) {
         whereClause.date = {
-          [Op.between]: [filter.dateRange.start, filter.dateRange.end],
+          [Op.between]: [
+            format(parse(filter.dateRange.start, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+            format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+          ],
         };
       } else if (filter.dateRange.end) {
-        // Filter for a specific day
         whereClause.date = {
-          [Op.eq]: filter.dateRange.end,
+          [Op.eq]: format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
         };
       }
     }
 
-    // Check if filter contains an operatorId
     if (filter?.operatorId) {
       whereClause.operatorId = filter.operatorId;
     }
@@ -99,38 +100,80 @@ export class DowntimeService {
 
   public async deleteDowntimeEntry() {}
 
-  public async generateDowntimeReport(filter: IDowntimeFilter) {
-    let whereClause: any = {};
+  public async generateDowntimeReport(params: IQueryParams) {
+    const { filter } = params;
 
-    if (filter) {
-      if (filter.dateRange && filter.dateRange.start) {
-        const startDate = parse(filter.dateRange.start, "yyyy-MM-dd'T'HH:mm:ss.sssX", new Date());
+    let whereClause: { [key: string]: any } = {};
+
+    if (filter?.dateRange) {
+      const dateFormat = 'MM/dd/yyyy';
+      if (filter.dateRange.start && filter.dateRange.end) {
         whereClause.date = {
-          [Op.gte]: startDate,
+          [Op.between]: [
+            format(parse(filter.dateRange.start, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+            format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+          ],
         };
-
-        if (filter.dateRange.end) {
-          const endDate = parse(filter.dateRange.end, "yyyy-MM-dd'T'HH:mm:ss.sssX", new Date());
-          whereClause.date[Op.lte] = endDate;
-        }
+      } else if (filter.dateRange.start) {
+        whereClause.date = {
+          [Op.gte]: format(parse(filter.dateRange.start, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+        };
+      } else if (filter.dateRange.end) {
+        whereClause.date = {
+          [Op.lte]: format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+        };
       }
-
-      if (filter.operatorId) {
-        whereClause.operatorId = filter.operatorId;
-      }
-    } else {
-      const ninetyDaysAgo = new Date();
-      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-
-      whereClause.date = {
-        [Op.between]: [ninetyDaysAgo, new Date()],
-      };
     }
 
-    const downtime = await db.DowntimeEntry.findAll({
+    if (filter?.operatorId) {
+      whereClause.operatorId = filter.operatorId;
+    }
+
+    const downtimeEntries: IDowntimeEntry[] = await db.DowntimeEntry.findAll({
       where: whereClause,
+      order: [['date', 'ASC']],
     });
 
-    return downtime;
+    const aggregatedDowntime: { [key: string]: IDowntimeReport } = {};
+
+    for (const entry of downtimeEntries) {
+      const entryDate = new Date(entry.date);
+      const dayOffset = 7 - entryDate.getDay();
+      const weekEnd = new Date(entryDate.getFullYear(), entryDate.getMonth(), entryDate.getDate() + dayOffset);
+      const weekOfKey = format(weekEnd, 'MM/dd/yyyy');
+
+      if (!aggregatedDowntime[weekOfKey]) {
+        aggregatedDowntime[weekOfKey] = {
+          totalDowntime: 0,
+          downtime: {},
+        };
+      }
+
+      const report = aggregatedDowntime[weekOfKey];
+
+      if (entry.downtime && typeof entry.downtime === 'object') {
+        for (const [reason, duration] of Object.entries(entry.downtime)) {
+          if (typeof duration === 'number') {
+            report.downtime[reason] = (report.downtime[reason] || 0) + duration;
+            report.totalDowntime += duration;
+          } else if (typeof duration === 'object') {
+            for (const [subReason, subDuration] of Object.entries(duration)) {
+              if (typeof subDuration === 'number') {
+                report.downtime[subReason] = (report.downtime[subReason] || 0) + subDuration;
+                report.totalDowntime += subDuration;
+              } else {
+                console.error(`Invalid sub-duration type for reason ${subReason}:`, subDuration);
+              }
+            }
+          } else {
+            console.error(`Invalid duration type for reason ${reason}:`, duration);
+          }
+        }
+      } else {
+        console.error('Invalid or missing downtime data in entry:', entry);
+      }
+    }
+
+    return aggregatedDowntime;
   }
 }

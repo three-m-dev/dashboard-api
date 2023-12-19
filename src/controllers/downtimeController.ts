@@ -28,6 +28,8 @@ export class DowntimeController {
     try {
       const { filter, sort, page, pageSize, fields } = req.query;
 
+      console.log(filter);
+
       const pageNumber = page ? parseInt(page as string) : undefined;
 
       const pageSizeNumber = pageSize ? parseInt(pageSize as string) : undefined;
@@ -58,13 +60,15 @@ export class DowntimeController {
 
   public async generateDowntimeReport(req: Request, res: Response) {
     try {
-      const filter = req.query;
+      const { filter } = req.query;
 
-      console.log(filter);
+      const params: IQueryParams = {
+        filter: filter ? JSON.parse(filter as string) : undefined,
+      };
 
       const downtimeService = new DowntimeService();
 
-      const report = await downtimeService.generateDowntimeReport(filter);
+      const report = await downtimeService.generateDowntimeReport(params);
 
       res.status(200).json(report);
     } catch (error: unknown) {

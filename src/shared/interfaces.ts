@@ -130,8 +130,7 @@ export interface IDowntimeEntry extends ICommon {
   updatedBy?: string;
 }
 
-export interface IDowntimeReport extends ICommon {
-  weekOf: Date;
+export interface IDowntimeReport {
   totalDowntime: number;
   downtime: {
     [reason: string]: number;
