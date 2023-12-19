@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { parse, format } from 'date-fns';
 import db from '../models';
-import { IDowntimeEntry, IDowntimeFilter, IDowntimeReport, IQueryParams } from '../shared/interfaces';
+import { IDowntimeEntry, IDowntimeReport, IQueryParams } from '../shared/interfaces';
 
 export class DowntimeService {
   public async createdDowntimeEntry(currentUserId: string, downtimeData: IDowntimeEntry) {
@@ -94,7 +94,15 @@ export class DowntimeService {
     return { downtimeEntries, total, pages };
   }
 
-  public async getDowntimeEntry() {}
+  public async getDowntimeEntry(downtimeEntryId: string) {
+    const downtimeEntry = await db.DowntimeEntry.findOne({ where: { id: downtimeEntryId } });
+
+    if (!downtimeEntry) {
+      throw new Error('Downtime entry not found');
+    }
+
+    return downtimeEntry;
+  }
 
   public async updateDowntimeEntry() {}
 

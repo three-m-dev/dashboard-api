@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { DowntimeService } from '../services/downtimeService';
 import { ExtendedRequest } from '../middleware/auth';
-import { IDowntimeFilter, IQueryParams } from '../shared/interfaces';
+import { IQueryParams } from '../shared/interfaces';
 
 export class DowntimeController {
   public async createDowntimeEntry(req: ExtendedRequest, res: Response) {
@@ -47,6 +47,24 @@ export class DowntimeController {
       const downtimeService = new DowntimeService();
 
       const response = await downtimeService.getDowntimeEntries(params);
+
+      res.status(200).json(response);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'An unexpected error occurred' });
+      }
+    }
+  }
+
+  public async getDowntimeEntry(req: Request, res: Response) {
+    try {
+      const downtimeEntryId: string = req.params.downtimeEntryId;
+
+      const downtimeService = new DowntimeService();
+
+      const response = await downtimeService.getDowntimeEntry(downtimeEntryId);
 
       res.status(200).json(response);
     } catch (error: unknown) {

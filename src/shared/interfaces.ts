@@ -137,10 +137,3 @@ export interface IDowntimeReport {
   };
 }
 
-export interface IDowntimeFilter {
-  dateRange?: {
-    start?: string;
-    end: string;
-  };
-  operatorId?: string;
-}
