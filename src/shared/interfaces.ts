@@ -133,8 +133,8 @@ export interface IDowntimeEntry extends ICommon {
 }
 
 export interface IDowntimeReport {
-  totalDowntime: number;
   downtime: {
     [reason: string]: number;
   };
+  total: number;
 }

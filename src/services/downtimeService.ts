@@ -169,8 +169,8 @@ export class DowntimeService {
 
       if (!aggregatedDowntime[weekOfKey]) {
         aggregatedDowntime[weekOfKey] = {
-          totalDowntime: 0,
           downtime: {},
+          total: 0,
         };
       }
 
@@ -180,12 +180,12 @@ export class DowntimeService {
         for (const [reason, duration] of Object.entries(entry.downtime)) {
           if (typeof duration === 'number') {
             report.downtime[reason] = (report.downtime[reason] || 0) + duration;
-            report.totalDowntime += duration;
+            report.total += duration;
           } else if (typeof duration === 'object') {
             for (const [subReason, subDuration] of Object.entries(duration)) {
               if (typeof subDuration === 'number') {
                 report.downtime[subReason] = (report.downtime[subReason] || 0) + subDuration;
-                report.totalDowntime += subDuration;
+                report.total += subDuration;
               } else {
                 console.error(`Invalid sub-duration type for reason ${subReason}:`, subDuration);
               }
