@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { IDowntimeEntry } from '../shared/interfaces';
+import { IDowntimeEntry, IEmployee } from '../shared/interfaces';
 
 export class DowntimeEntry extends Model<IDowntimeEntry> implements IDowntimeEntry {
   public id!: string;
@@ -8,6 +8,7 @@ export class DowntimeEntry extends Model<IDowntimeEntry> implements IDowntimeEnt
   public downtime!: {
     [reason: string]: number;
   };
+  public total!: number;
   public notes?: string;
   public createdBy!: string;
   public updatedBY?: string;
@@ -33,6 +34,10 @@ export class DowntimeEntry extends Model<IDowntimeEntry> implements IDowntimeEnt
           type: DataTypes.JSON,
           allowNull: false,
         },
+        total: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
         notes: {
           type: DataTypes.STRING,
           allowNull: true,
@@ -51,6 +56,13 @@ export class DowntimeEntry extends Model<IDowntimeEntry> implements IDowntimeEnt
         sequelize,
       }
     );
+  }
+
+  public static associate(models: any) {
+    this.belongsTo(models.Employee, {
+      foreignKey: 'operatorId',
+      as: 'operator',
+    });
   }
 }
 

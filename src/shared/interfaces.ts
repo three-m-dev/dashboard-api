@@ -121,10 +121,12 @@ export interface IProductionLog extends ICommon {
 
 export interface IDowntimeEntry extends ICommon {
   operatorId: string;
+  operator?: IEmployee;
   date: string;
   downtime: {
     [reason: string]: number;
   };
+  total: number;
   notes?: string;
   createdBy: string;
   updatedBy?: string;
@@ -136,4 +138,3 @@ export interface IDowntimeReport {
     [reason: string]: number;
   };
 }
-

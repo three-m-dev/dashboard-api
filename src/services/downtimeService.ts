@@ -34,9 +34,17 @@ export class DowntimeService {
       throw new Error('Operator already has an entry for the selected date');
     }
 
+    let totalDowntime = 0;
+    if (Array.isArray(downtimeData.downtime)) {
+      totalDowntime = downtimeData.downtime.reduce((acc, reason) => {
+        return acc + Object.values(reason)[0];
+      }, 0);
+    }
+
     const downtimeEntry = await db.DowntimeEntry.create({
       ...downtimeData,
       date: formattedDate,
+      total: totalDowntime,
       createdBy: currentUser.id,
     });
 
@@ -77,12 +85,21 @@ export class DowntimeService {
       whereClause.operatorId = filter.operatorId;
     }
 
+    const includeClause = [
+      {
+        model: db.Employee,
+        as: 'operator',
+        attributes: ['id', 'firstName', 'lastName'], // Specify attributes of the Employee model you want to include
+      },
+    ];
+
     const downtimeEntries = await db.DowntimeEntry.findAll({
       where: whereClause,
       order: orderClause,
       limit,
       offset,
       attributes,
+      include: includeClause,
     });
 
     const total = await db.DowntimeEntry.count({
