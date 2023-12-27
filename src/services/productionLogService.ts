@@ -1,3 +1,5 @@
+import { Op } from 'sequelize';
+import { format, parse } from 'date-fns';
 import db from '../models';
 import { IProductionLog, IQueryParams } from '../shared/interfaces';
 
@@ -27,7 +29,7 @@ export class ProductionLogService {
   public async getProductionLogs(params: IQueryParams) {
     const { filter, sort, page, pageSize, fields } = params;
 
-    let whereClause = filter || {};
+    let whereClause: any = {};
     let orderClause: [string, string][] = [];
     let limit = pageSize;
     let offset = page && pageSize ? (page - 1) * pageSize : 0;
@@ -38,9 +40,20 @@ export class ProductionLogService {
       orderClause.push([field, order.toUpperCase()]);
     }
 
-    if (page && pageSize) {
-      limit = pageSize;
-      offset = (page - 1) * pageSize;
+    if (filter?.dateRange) {
+      const dateFormat = 'MM/dd/yyyy';
+      if (filter.dateRange.start && filter.dateRange.end) {
+        whereClause.weekOf = {
+          [Op.between]: [
+            format(parse(filter.dateRange.start, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+            format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+          ],
+        };
+      } else if (filter.dateRange.end) {
+        whereClause.weekOf = {
+          [Op.eq]: format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+        };
+      }
     }
 
     const productionLogs = await db.ProductionLog.findAll({
