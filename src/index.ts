@@ -14,6 +14,7 @@ import departmentRoutes from './routes/departmentRoutes';
 import downtimeRoutes from './routes/downtimeRoutes';
 import employeeRoutes from './routes/employeeRoutes';
 import jobRoutes from './routes/jobRoutes';
+import productionLogRoutes from './routes/productionLogRoutes';
 import userRoutes from './routes/userRoutes';
 
 const NAMESPACE = 'Server';
@@ -69,6 +70,7 @@ app.use('/api/v1/departments', departmentRoutes);
 app.use('/api/v1/downtime', downtimeRoutes);
 app.use('/api/v1/employees', employeeRoutes);
 app.use('/api/v1/jobs', jobRoutes);
+app.use('/api/v1/production', productionLogRoutes);
 app.use('/api/v1/users', userRoutes);
 
 const server = http.createServer(app);
