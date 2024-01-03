@@ -19,7 +19,7 @@ export class DowntimeService {
       throw new Error('Operator is required');
     }
 
-    const dateObject = parse(downtimeData.date, 'MM/dd/yyyy', new Date());
+    const dateObject = parse(downtimeData.date, 'yyyy-MM-dd', new Date());
 
     const formattedDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.sssXXX");
 
@@ -66,7 +66,7 @@ export class DowntimeService {
     }
 
     if (filter?.dateRange) {
-      const dateFormat = 'MM/dd/yyyy';
+      const dateFormat = 'yyyy-MM-dd';
       if (filter.dateRange.start && filter.dateRange.end) {
         whereClause.date = {
           [Op.between]: [
@@ -131,7 +131,7 @@ export class DowntimeService {
     let whereClause: { [key: string]: any } = {};
 
     if (filter?.dateRange) {
-      const dateFormat = 'MM/dd/yyyy';
+      const dateFormat = 'yyyy-MM-dd';
       if (filter.dateRange.start && filter.dateRange.end) {
         whereClause.date = {
           [Op.between]: [
@@ -165,7 +165,7 @@ export class DowntimeService {
       const entryDate = new Date(entry.date);
       const dayOffset = 7 - entryDate.getDay();
       const weekEnd = new Date(entryDate.getFullYear(), entryDate.getMonth(), entryDate.getDate() + dayOffset);
-      const weekOfKey = format(weekEnd, 'MM/dd/yyyy');
+      const weekOfKey = format(weekEnd, 'yyyy-MM-dd');
 
       if (!aggregatedDowntime[weekOfKey]) {
         aggregatedDowntime[weekOfKey] = {

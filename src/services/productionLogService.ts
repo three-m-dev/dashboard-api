@@ -41,7 +41,7 @@ export class ProductionLogService {
     }
 
     if (filter?.dateRange) {
-      const dateFormat = 'MM/dd/yyyy';
+      const dateFormat = 'yyyy-MM-dd';
       if (filter.dateRange.start && filter.dateRange.end) {
         whereClause.weekOf = {
           [Op.between]: [
