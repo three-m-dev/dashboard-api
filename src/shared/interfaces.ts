@@ -114,6 +114,7 @@ export interface IProductionLog extends ICommon {
   quotedHours?: number;
   actualHours?: number;
   indirectHours?: number;
+  totalHours?: number;
   notes?: string;
   createdBy: string;
   updatedBy?: string;
