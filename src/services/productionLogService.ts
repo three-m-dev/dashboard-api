@@ -43,15 +43,20 @@ export class ProductionLogService {
     if (filter?.dateRange) {
       const dateFormat = 'yyyy-MM-dd';
       if (filter.dateRange.start && filter.dateRange.end) {
+        const startDate = parse(filter.dateRange.start, dateFormat, new Date());
+        const endDate = parse(filter.dateRange.end, dateFormat, new Date());
+
+        endDate.setHours(23, 59, 59, 999);
+
         whereClause.weekOf = {
-          [Op.between]: [
-            format(parse(filter.dateRange.start, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
-            format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
-          ],
+          [Op.between]: [format(startDate, 'yyyy-MM-dd HH:mm:ss'), format(endDate, 'yyyy-MM-dd HH:mm:ss')],
         };
       } else if (filter.dateRange.end) {
+        const endDate = parse(filter.dateRange.end, dateFormat, new Date());
+        endDate.setHours(23, 59, 59, 999);
+
         whereClause.weekOf = {
-          [Op.eq]: format(parse(filter.dateRange.end, dateFormat, new Date()), 'yyyy-MM-dd HH:mm:ss'),
+          [Op.eq]: format(endDate, 'yyyy-MM-dd HH:mm:ss'),
         };
       }
     }
