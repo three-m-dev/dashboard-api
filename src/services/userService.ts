@@ -129,6 +129,8 @@ export class UserService {
 			expiresIn: '12h',
 		});
 
-		return { accessToken };
+		const employee = await db.Employee.findOne({ where: { userId: user.id } });
+
+		return { accessToken, employee };
 	}
 }
