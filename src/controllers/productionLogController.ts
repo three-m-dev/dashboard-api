@@ -77,8 +77,6 @@ export class ProductionLogController {
     try {
       const productionLogId: string = req.params.productionLogId;
 
-      console.log(req);
-
       const productionLogService = new ProductionLogService();
 
       const response = await productionLogService.updateProductionLog(productionLogId, req.body);

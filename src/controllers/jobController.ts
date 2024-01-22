@@ -77,8 +77,6 @@ export class JobController {
     try {
       const jobId: string = req.params.jobId;
 
-      console.log(req);
-
       const jobService = new JobService();
 
       const response = await jobService.updateJob(jobId, req.body);
