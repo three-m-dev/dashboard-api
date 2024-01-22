@@ -12,4 +12,6 @@ router.get('/logs', protect, productionLogController.getProductionLogs);
 
 router.get('/logs/:productionLogId', protect, productionLogController.getProductionLog);
 
+router.patch('/:productionLogId', protect, productionLogController.updateProductionLog);
+
 export default router;

@@ -72,4 +72,24 @@ export class ProductionLogController {
       }
     }
   }
+
+  public async updateProductionLog(req: Request, res: Response) {
+    try {
+      const productionLogId: string = req.params.productionLogId;
+
+      console.log(req);
+
+      const productionLogService = new ProductionLogService();
+
+      const response = await productionLogService.updateProductionLog(productionLogId, req.body);
+
+      res.status(200).json(response);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'An unexpected error occurred' });
+      }
+    }
+  }
 }

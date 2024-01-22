@@ -90,7 +90,27 @@ export class ProductionLogService {
     return productionLog;
   }
 
-  public async updateProductionLog() {}
+  public async updateProductionLog(productionLogId: string, updates: Partial<IProductionLog>) {
+    const restrictedFields = ['id', 'weekOf', 'createdAt', 'createdBy'];
+
+    for (const field of restrictedFields) {
+      if (updates[field as keyof IProductionLog] !== undefined) {
+        throw new Error(`Field '${field}' cannot be updated`);
+      }
+    }
+
+    const productionLog = await db.ProductionLog.findOne({ where: { id: productionLogId } });
+
+    if (!productionLog) {
+      throw new Error('Production log not found');
+    }
+
+    Object.assign(productionLog, updates);
+
+    await productionLog.save();
+
+    return { productionLog };
+  }
 
   public async deleteProductionLog() {}
 }
