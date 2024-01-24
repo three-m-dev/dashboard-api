@@ -17,7 +17,7 @@ import jobRoutes from './routes/jobRoutes';
 import productionLogRoutes from './routes/productionLogRoutes';
 import userRoutes from './routes/userRoutes';
 
-import { WatcherService } from './services/watcherService';
+import { FileWatchService } from './services/fileWatchService';
 
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';
@@ -25,7 +25,7 @@ const ENVIRONMENT = process.env.ENVIRONMENT || 'development';
 const WATCHED_FILE_PATH = 'C:/Users/jreppuhn.THREE-M/Desktop/watch-me/test.xlsx';
 
 const app = express();
-const watcherService = new WatcherService();
+const FileWatcher = new FileWatchService(WATCHED_FILE_PATH);
 
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -81,8 +81,7 @@ const server = http.createServer(app);
 
 server.listen(PORT, () => {
   console.log(`Application running ${ENVIRONMENT} mode on port ${PORT}..`);
-  watcherService
-    .watch(WATCHED_FILE_PATH)
+  FileWatcher.watch()
     .then(() => {
       console.log('WatcherService started successfully.');
     })
