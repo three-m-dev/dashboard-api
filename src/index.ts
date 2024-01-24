@@ -83,7 +83,7 @@ server.listen(PORT, () => {
   console.log(`Application running ${ENVIRONMENT} mode on port ${PORT}..`);
   FileWatcher.watch()
     .then(() => {
-      console.log('WatcherService started successfully.');
+      console.log('File watcher started successfully.');
     })
     .catch((err: Error) => {
       console.error('Error starting WatcherService:', err);

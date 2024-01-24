@@ -54,6 +54,7 @@ export class FileWatchService {
     const currentDataLength = currentData.length;
     const newDataLength = newData.length;
     const maxDataLength = Math.max(currentDataLength, newDataLength);
+    let sheetChanged = false;
 
     for (let i = 0; i < maxDataLength; i++) {
       const currentRow = currentData[i];
@@ -61,26 +62,33 @@ export class FileWatchService {
 
       if (!newRow) {
         console.log(`Row removed: ${JSON.stringify(currentRow)}`);
+        sheetChanged = true;
         continue;
       }
 
       if (!currentRow) {
         console.log(`New row added: ${JSON.stringify(newRow)}`);
+        sheetChanged = true;
         continue;
       }
 
       for (const key in newRow) {
         if (newRow[key] !== currentRow[key]) {
           console.log(`Change detected in row ${i + 1}, column ${key}: '${currentRow[key]}' -> '${newRow[key]}'`);
+          sheetChanged = true;
         }
       }
 
-      // Check for removed cells
       for (const key in currentRow) {
         if (!newRow.hasOwnProperty(key)) {
           console.log(`Cell removed in row ${i + 1}, column ${key}: '${currentRow[key]}'`);
+          sheetChanged = true;
         }
       }
+    }
+
+    if (!sheetChanged) {
+      console.log(`No changes in the entire sheet`);
     }
   }
 
@@ -91,7 +99,7 @@ export class FileWatchService {
       }
       this.debounceTimeout = setTimeout(async () => {
         if (eventType === 'change') {
-          console.log(`File ${filename} has been modified. Processing changes...`);
+          console.log(`File ${filename} has been saved. Processing changes...`);
           const currentData = await this.getCurrentData();
           const newData = this.getNewData();
 
@@ -105,7 +113,7 @@ export class FileWatchService {
             }
           });
         }
-      }, 300); // Adjust debounce time as needed
+      }, 300);
     });
 
     console.log(`Watching for changes in file: ${this.watchedFilePath}`);
