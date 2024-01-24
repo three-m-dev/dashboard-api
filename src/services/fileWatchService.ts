@@ -88,7 +88,7 @@ export class FileWatchService {
     }
 
     if (!sheetChanged) {
-      console.log(`No changes in the entire sheet`);
+      console.log(`No changes detected`);
     }
   }
 
