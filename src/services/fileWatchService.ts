@@ -50,7 +50,7 @@ export class FileWatchService {
     return date.toISOString();
   }
 
-  private compareData(currentData: DataRow[], newData: DataRow[]): void {
+  private compareData(currentData: DataRow[], newData: DataRow[]): boolean {
     const currentDataLength = currentData.length;
     const newDataLength = newData.length;
     const maxDataLength = Math.max(currentDataLength, newDataLength);
@@ -87,9 +87,7 @@ export class FileWatchService {
       }
     }
 
-    if (!sheetChanged) {
-      console.log(`No changes detected`);
-    }
+    return sheetChanged;
   }
 
   public async watch(): Promise<void> {
@@ -103,15 +101,19 @@ export class FileWatchService {
           const currentData = await this.getCurrentData();
           const newData = this.getNewData();
 
-          this.compareData(currentData, newData);
+          const isChanged = this.compareData(currentData, newData);
 
-          jsonFile.writeFile(this.currentDataPath, newData, { spaces: 2 }, (err) => {
-            if (err) {
-              console.error('Error writing to JSON file:', err);
-            } else {
-              console.log('JSON file updated successfully.');
-            }
-          });
+          if (isChanged) {
+            jsonFile.writeFile(this.currentDataPath, newData, { spaces: 2 }, (err) => {
+              if (err) {
+                console.error('Error writing to JSON file:', err);
+              } else {
+                console.log('JSON file updated successfully.');
+              }
+            });
+          } else {
+            console.log('No changes detected.');
+          }
         }
       }, 300);
     });
