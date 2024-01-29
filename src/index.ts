@@ -22,7 +22,7 @@ import { FileWatchService } from './services/fileWatchService';
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';
 const ENVIRONMENT = process.env.ENVIRONMENT || 'development';
-const WATCHED_FILE_PATH = 'C:/Users/jreppuhn.THREE-M/Desktop/watch-me/test.xlsx';
+const WATCHED_FILE_PATH = '/home/ubuntu/OneDrive/Dashboard/test.xlsx';
 
 const app = express();
 const FileWatcher = new FileWatchService(WATCHED_FILE_PATH);
