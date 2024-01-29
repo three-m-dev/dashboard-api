@@ -28,37 +28,37 @@ const app = express();
 const FileWatcher = new FileWatchService(WATCHED_FILE_PATH);
 
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin) {
-      callback(null, true);
-    } else {
-      callback(null, true);
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
+	origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+		if (!origin) {
+			callback(null, true);
+		} else {
+			callback(null, true);
+		}
+	},
+	credentials: true,
+	optionsSuccessStatus: 200,
 };
 
 db.sequelize
-  .sync()
-  .then(() => {
-    logger.info(NAMESPACE, 'Database synchronized');
-  })
-  .catch((err: Error) => {
-    logger.error(NAMESPACE, 'Error synchronizing database', err);
-  });
+	.sync()
+	.then(() => {
+		logger.info(NAMESPACE, 'Database synchronized');
+	})
+	.catch((err: Error) => {
+		logger.error(NAMESPACE, 'Error synchronizing database', err);
+	});
 
 app.use((req, res, next) => {
-  logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+	logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
-  res.on('finish', () => {
-    logger.info(
-      NAMESPACE,
-      `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`
-    );
-  });
+	res.on('finish', () => {
+		logger.info(
+			NAMESPACE,
+			`METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`
+		);
+	});
 
-  next();
+	next();
 });
 
 app.use(compression());
@@ -80,12 +80,13 @@ app.use('/api/v1/users', userRoutes);
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
-  console.log(`Application running ${ENVIRONMENT} mode on port ${PORT}..`);
-  FileWatcher.watch()
-    .then(() => {
-      console.log('File watcher started successfully.');
-    })
-    .catch((err: Error) => {
-      console.error('Error starting WatcherService:', err);
-    });
+	console.log(`Server running in ${ENVIRONMENT} mode on port ${PORT}..`);
+	FileWatcher.watch()
+		.then(() => {
+			console.log('File watcher started successfully');
+		})
+		.catch((err: Error) => {
+			console.log(err.message);
+			console.log('Failed to start file watcher');
+		});
 });
