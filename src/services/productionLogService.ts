@@ -4,113 +4,100 @@ import db from '../models';
 import { IProductionLog, IQueryParams } from '../shared/interfaces';
 
 export class ProductionLogService {
-  public async createProductionLog(currentUserId: string, productionLogData: IProductionLog) {
-    const currentUser = await db.Employee.findOne({ where: { userId: currentUserId } });
+	public async createProductionLog(currentUserId: string, productionLogData: IProductionLog) {
+		const currentUser = await db.Employee.findOne({ where: { userId: currentUserId } });
 
-    if (!currentUser) {
-      throw new Error('Current user not found');
-    }
+		if (!currentUser) {
+			throw new Error('Current user not found');
+		}
 
-    const existingProductionLog = await db.ProductionLog.findOne({
-      where: {
-        weekOf: productionLogData.weekOf,
-      },
-    });
+		const existingProductionLog = await db.ProductionLog.findOne({
+			where: {
+				weekOf: productionLogData.weekOf,
+			},
+		});
 
-    if (existingProductionLog) {
-      throw new Error('A production log has already been created for the week selected');
-    }
+		if (existingProductionLog) {
+			throw new Error('A production log has already been created for the week selected');
+		}
 
-    const productionLog = await db.ProductionLog.create({ ...productionLogData, createdBy: currentUser.id });
+		const productionLog = await db.ProductionLog.create({ ...productionLogData, createdBy: currentUser.id });
 
-    return productionLog;
-  }
+		return productionLog;
+	}
 
-  public async getProductionLogs(params: IQueryParams) {
-    const { filter, sort, page, pageSize, fields } = params;
+	public async getProductionLogs(params: IQueryParams) {
+		const { filter, sort, page, pageSize, fields } = params;
 
-    let whereClause: any = {};
-    let orderClause: [string, string][] = [];
-    let limit = pageSize;
-    let offset = page && pageSize ? (page - 1) * pageSize : 0;
-    let attributes: string[] | undefined = fields;
+		let whereClause: any = {};
+		let limit = pageSize;
+		let offset = page && pageSize ? (page - 1) * pageSize : 0;
+		let attributes: string[] | undefined = fields;
 
-    if (sort) {
-      const [field, order] = sort.split(',');
-      orderClause.push([field, order.toUpperCase()]);
-    }
+		// Fetch logs first without order
+		let productionLogs = await db.ProductionLog.findAll({
+			where: whereClause,
+			limit,
+			offset,
+			attributes,
+		});
 
-    if (filter?.dateRange) {
-      const dateFormat = 'yyyy-MM-dd';
-      if (filter.dateRange.start && filter.dateRange.end) {
-        const startDate = parse(filter.dateRange.start, dateFormat, new Date());
-        const endDate = parse(filter.dateRange.end, dateFormat, new Date());
+		// Sort logs by 'weekOf' if no sort parameter is provided
+		if (!sort) {
+			productionLogs.sort((a: any, b: any) => new Date(a.weekOf).getTime() - new Date(b.weekOf).getTime());
+		} else {
+			// Custom sort logic if sort parameter is provided
+			const [field, order] = sort.split(',');
+			productionLogs.sort((a: any, b: any) => {
+				if (order.toUpperCase() === 'ASC') {
+					return a[field] > b[field] ? 1 : -1;
+				} else {
+					return a[field] < b[field] ? 1 : -1;
+				}
+			});
+		}
 
-        endDate.setHours(23, 59, 59, 999);
+		const total = await db.ProductionLog.count({ where: whereClause });
+		const pages = limit ? Math.ceil(total / limit) : 0;
 
-        whereClause.weekOf = {
-          [Op.between]: [format(startDate, 'yyyy-MM-dd HH:mm:ss'), format(endDate, 'yyyy-MM-dd HH:mm:ss')],
-        };
-      } else if (filter.dateRange.end) {
-        const endDate = parse(filter.dateRange.end, dateFormat, new Date());
-        endDate.setHours(23, 59, 59, 999);
+		return { productionLogs, total, pages };
+	}
 
-        whereClause.weekOf = {
-          [Op.eq]: format(endDate, 'yyyy-MM-dd HH:mm:ss'),
-        };
-      }
-    }
+	public async getProductionLog(productionLogId: string) {
+		const productionLog = await db.ProductionLog.findOne({
+			where: {
+				id: productionLogId,
+			},
+		});
 
-    const productionLogs = await db.ProductionLog.findAll({
-      where: whereClause,
-      order: orderClause,
-      limit,
-      offset,
-      attributes,
-    });
+		if (!productionLog) {
+			throw new Error('Production log not found');
+		}
 
-    const total = await db.ProductionLog.count({ where: whereClause });
+		return productionLog;
+	}
 
-    const pages = limit ? Math.ceil(total / limit) : 0;
+	public async updateProductionLog(productionLogId: string, updates: Partial<IProductionLog>) {
+		const restrictedFields = ['id', 'weekOf', 'createdAt', 'createdBy'];
 
-    return { productionLogs, total, pages };
-  }
+		for (const field of restrictedFields) {
+			if (updates[field as keyof IProductionLog] !== undefined) {
+				throw new Error(`Field '${field}' cannot be updated`);
+			}
+		}
 
-  public async getProductionLog(productionLogId: string) {
-    const productionLog = await db.ProductionLog.findOne({
-      where: {
-        id: productionLogId,
-      },
-    });
+		const productionLog = await db.ProductionLog.findOne({ where: { id: productionLogId } });
 
-    if (!productionLog) {
-      throw new Error('Production log not found');
-    }
+		if (!productionLog) {
+			throw new Error('Production log not found');
+		}
 
-    return productionLog;
-  }
+		Object.assign(productionLog, updates);
 
-  public async updateProductionLog(productionLogId: string, updates: Partial<IProductionLog>) {
-    const restrictedFields = ['id', 'weekOf', 'createdAt', 'createdBy'];
+		await productionLog.save();
 
-    for (const field of restrictedFields) {
-      if (updates[field as keyof IProductionLog] !== undefined) {
-        throw new Error(`Field '${field}' cannot be updated`);
-      }
-    }
+		return { productionLog };
+	}
 
-    const productionLog = await db.ProductionLog.findOne({ where: { id: productionLogId } });
-
-    if (!productionLog) {
-      throw new Error('Production log not found');
-    }
-
-    Object.assign(productionLog, updates);
-
-    await productionLog.save();
-
-    return { productionLog };
-  }
-
-  public async deleteProductionLog() {}
+	public async deleteProductionLog() {}
 }
