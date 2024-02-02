@@ -9,24 +9,13 @@ import logger from './utils/logger';
 import db from './models/index';
 
 import accountRoutes from './routes/accountRoutes';
-import applicantRoutes from './routes/applicantRoutes';
-import applicationRoutes from './routes/applicationRoutes';
-import departmentRoutes from './routes/departmentRoutes';
-// import downtimeRoutes from './routes/downtimeRoutes';
 // import employeeRoutes from './routes/employeeRoutes';
-// import jobRoutes from './routes/jobRoutes';
-// import productionLogRoutes from './routes/productionLogRoutes';
-// import userRoutes from './routes/userRoutes';
-
-import { FileWatchService } from './services/fileWatchService';
 
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';
 const ENVIRONMENT = process.env.ENVIRONMENT || 'development';
-const WATCHED_FILE_PATH = '/home/ubuntu/OneDrive/Dashboard/test.xlsx';
 
 const app = express();
-const FileWatcher = new FileWatchService(WATCHED_FILE_PATH);
 
 const corsOptions = {
 	origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -70,25 +59,11 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 app.use('/api/v1/accounts', accountRoutes);
-app.use('/api/v1/applicants', applicantRoutes);
-app.use('/api/v1/applications', applicationRoutes);
-app.use('/api/v1/departments', departmentRoutes);
-// app.use('/api/v1/downtime', downtimeRoutes);
+
 // app.use('/api/v1/employees', employeeRoutes);
-// app.use('/api/v1/jobs', jobRoutes);
-// app.use('/api/v1/production', productionLogRoutes);
-// app.use('/api/v1/users', userRoutes);
 
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
 	console.log(`Server running in ${ENVIRONMENT} mode on port ${PORT}..`);
-	FileWatcher.watch()
-		.then(() => {
-			console.log('File watcher started successfully');
-		})
-		.catch((err: Error) => {
-			console.log(err.message);
-			console.log('Failed to start file watcher');
-		});
 });

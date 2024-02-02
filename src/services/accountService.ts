@@ -1,6 +1,6 @@
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { IAccount } from '../shared/types';
+import { IAccount } from '../interfaces';
 import db from '../models';
 
 export class AccountService {
