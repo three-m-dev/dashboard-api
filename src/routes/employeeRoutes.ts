@@ -1,19 +1,17 @@
-// import { Router } from 'express';
-// import { EmployeeController } from '../controllers/employeeController';
-// import { protect } from '../middleware/auth';
+import { Router } from 'express';
+import { EmployeeController } from '../controllers/employeeController';
+import { protect } from '../middleware/auth';
 
-// const router = Router();
+const router = Router();
 
-// const employeeController = new EmployeeController();
+const employeeController = new EmployeeController();
 
-// router.post('/', protect, employeeController.createEmployee);
+router.get('/', protect, employeeController.getEmployees);
 
-// router.get('/', protect, employeeController.getEmployees);
+router.get('/:employeeId', protect, employeeController.getEmployee);
 
-// router.get('/:employeeId', protect, employeeController.getEmployee);
+router.patch('/:employeeId', protect, employeeController.updateEmployee);
 
-// router.patch('/:employeeId', protect, employeeController.updateEmployee);
+router.delete('/:employeeId', protect, employeeController.deleteEmployee);
 
-// router.delete('/:employeeId', protect, employeeController.deleteEmployee);
-
-// export default router;
+export default router;

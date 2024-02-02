@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ExtendedRequest } from '../middleware/auth';
 import { AccountService } from '../services/accountService';
+import { IQueryParams } from '../interfaces';
 
 export class AccountController {
 	public async createAccount(req: Request, res: Response) {
@@ -23,24 +24,24 @@ export class AccountController {
 
 	public async getAccounts(req: Request, res: Response) {
 		try {
-			// const { filter, sort, page, pageSize, fields } = req.query;
+			const { filter, sort, page, pageSize, fields } = req.query;
 
-			// const pageNumber = page ? parseInt(page as string) : undefined;
-			// const pageSizeNumber = pageSize ? parseInt(pageSize as string) : undefined;
+			const pageNumber = page ? parseInt(page as string) : undefined;
+			const pageSizeNumber = pageSize ? parseInt(pageSize as string) : undefined;
 
-			// const fieldsArray = typeof fields === 'string' ? fields.split(',') : fields;
+			const fieldsArray = typeof fields === 'string' ? fields.split(',') : fields;
 
-			// const params: IQueryParams = {
-			// 	filter: filter ? JSON.parse(filter as string) : undefined,
-			// 	sort: sort as string | undefined,
-			// 	page: pageNumber,
-			// 	pageSize: pageSizeNumber,
-			// 	fields: fieldsArray as string[] | undefined,
-			// };
+			const params: IQueryParams = {
+				filter: filter ? JSON.parse(filter as string) : undefined,
+				sort: sort as string | undefined,
+				page: pageNumber,
+				pageSize: pageSizeNumber,
+				fields: fieldsArray as string[] | undefined,
+			};
 
 			const accountService = new AccountService();
 
-			const response = await accountService.getAccounts();
+			const response = await accountService.getAccounts(params);
 
 			res.status(200).json(response);
 		} catch (error: unknown) {

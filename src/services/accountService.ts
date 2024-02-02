@@ -1,6 +1,6 @@
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { IAccount, IEmployee } from '../interfaces';
+import { IAccount, IEmployee, IQueryParams } from '../interfaces';
 import db from '../models';
 import { EmployeeService } from './employeeService';
 
@@ -85,14 +85,35 @@ export class AccountService {
 		}
 	}
 
-	public async getAccounts() {
-		const accounts = await db.Account.findAll();
+	public async getAccounts(params: IQueryParams) {
+		const { filter, sort, page, pageSize, fields } = params;
 
-		if (!accounts) {
-			throw new Error('No accounts found');
+		let whereClause = filter || {};
+		let orderClause: [string, string][] = [];
+		let limit = pageSize;
+		let offset = page && pageSize ? (page - 1) * pageSize : 0;
+		let attributes: string[] | undefined = fields;
+
+		if (sort) {
+			const [field, order] = sort.split(',');
+			orderClause.push([field, order.toUpperCase()]);
 		}
 
-		return accounts;
+		const accounts = await db.Account.findAll({
+			where: whereClause,
+			order: orderClause,
+			limit,
+			offset,
+			attributes,
+		});
+
+		const total = await db.Account.count({
+			where: whereClause,
+		});
+
+		const pages = limit ? Math.ceil(total / limit) : 0;
+
+		return { accounts, total, pages };
 	}
 
 	public async getAccount(accountId: string) {

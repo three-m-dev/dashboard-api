@@ -9,7 +9,7 @@ import logger from './utils/logger';
 import db from './models/index';
 
 import accountRoutes from './routes/accountRoutes';
-// import employeeRoutes from './routes/employeeRoutes';
+import employeeRoutes from './routes/employeeRoutes';
 
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';
@@ -59,8 +59,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 app.use('/api/v1/accounts', accountRoutes);
-
-// app.use('/api/v1/employees', employeeRoutes);
+app.use('/api/v1/employees', employeeRoutes);
 
 const server = http.createServer(app);
 

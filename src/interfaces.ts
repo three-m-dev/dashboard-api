@@ -46,3 +46,11 @@ export interface IPermission {
 	accessDevelopment: boolean;
 	accessProduction: boolean;
 }
+
+export interface IQueryParams {
+	filter?: Record<string, any>;
+	sort?: string;
+	page?: number;
+	pageSize?: number;
+	fields?: string[];
+}
