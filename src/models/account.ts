@@ -56,6 +56,15 @@ export class Account extends Model<IAccount> implements IAccount {
 			}
 		);
 	}
+
+	public static associate(models: any) {
+		Account.hasOne(models.Employee, {
+			sourceKey: 'id',
+			foreignKey: 'accountId',
+			as: 'employee',
+			onDelete: 'CASCADE',
+		});
+	}
 }
 
 export default Account;

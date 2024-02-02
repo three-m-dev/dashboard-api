@@ -1,214 +1,100 @@
-import bcrypt from 'bcryptjs';
+import { IEmployee } from '../interfaces';
 import db from '../models';
-import { IEmployee, IQueryParams, IUser } from '../shared/interfaces';
-import { UserService } from './userService';
+import { IQueryParams, IUser } from '../shared/interfaces';
 
 export class EmployeeService {
-  private userService: UserService;
+	public async createEmployee(employeeData: IEmployee, accountId: string, txn?: any) {
+		const requiredFields = ['firstName', 'lastName', 'company', 'department', 'title', 'status', 'startDate'];
 
-  constructor() {
-    this.userService = new UserService();
-  }
+		for (const field of requiredFields) {
+			if (!employeeData[field as keyof IEmployee]) {
+				throw new Error(`${field} is required`);
+			}
+		}
 
-  public async createEmployee(currentUserId: string, employeeData: IEmployee, userData: IUser) {
-    const t = await db.sequelize.transaction();
+		if (employeeData.endDate && employeeData.startDate > employeeData.endDate) {
+			throw new Error('End date must be after start date');
+		}
 
-    try {
-      const currentUser = await db.Employee.findOne({ where: { userId: currentUserId } });
+		const employee = await db.Employee.create({ ...employeeData, accountId }, { transaction: txn });
 
-      if (!currentUser) {
-        throw new Error('Current user not found');
-      }
+		return employee;
+	}
 
-      if (!userData.username || !userData.password) {
-        throw new Error('Username and password are required');
-      }
+	public async getEmployees(params: IQueryParams) {
+		const { filter, sort, page, pageSize, fields } = params;
 
-      if (userData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
-      }
+		let whereClause = filter || {};
+		let orderClause: [string, string][] = [];
+		let limit = pageSize;
+		let offset = page && pageSize ? (page - 1) * pageSize : 0;
+		let attributes: string[] | undefined = fields;
 
-      const existingUser = await db.User.findOne({ where: { username: userData.username } }, { transaction: t });
+		if (sort) {
+			const [field, order] = sort.split(',');
+			orderClause.push([field, order.toUpperCase()]);
+		}
 
-      if (existingUser) {
-        throw new Error('Username already exists');
-      }
+		const employees = await db.Employee.findAll({
+			where: whereClause,
+			order: orderClause,
+			limit,
+			offset,
+			attributes,
+		});
 
-      if (!employeeData.firstName || !employeeData.lastName) {
-        throw new Error('First and last name are required');
-      }
+		const total = await db.Employee.count({
+			where: whereClause,
+		});
 
-      if (!employeeData.title) {
-        throw new Error('Title is required');
-      }
+		const pages = limit ? Math.ceil(total / limit) : 0;
 
-      if (!employeeData.company) {
-        throw new Error('Company is required');
-      }
+		return { employees, total, pages };
+	}
 
-      if (!employeeData.departmentId) {
-        throw new Error('Department is required');
-      }
+	public async getEmployee(employeeId: string) {
+		const employee = await db.Employee.findOne({
+			where: { id: employeeId },
+		});
 
-      if (!employeeData.directReportId) {
-        throw new Error('Direct report is required');
-      }
+		if (!employee) {
+			throw new Error('Employee not found');
+		}
 
-      // const directReport = await db.Employee.findOne({ where: { id: employeeData.directReportId } });
+		return employee;
+	}
 
-      // if (!directReport) {
-      // 	throw new Error('Direct report not found');
-      // }
+	public async updateEmployee(employeeId: string, updates: Partial<IUser>) {
+		const restrictedFields = ['id', 'createdAt', 'createdBy', 'accountId'];
 
-      if (!employeeData.type) {
-        throw new Error('Type is required');
-      }
+		for (const field of restrictedFields) {
+			if (updates[field as keyof IUser] !== undefined) {
+				throw new Error(`Field '${field}' cannot be updated`);
+			}
+		}
 
-      if (!employeeData.status) {
-        throw new Error('Status is required');
-      }
+		const employee = await db.Employee.findOne({ where: { id: employeeId } });
 
-      if (!employeeData.startDate) {
-        throw new Error('Start date is required');
-      }
+		if (!employee) {
+			throw new Error('Employee not found');
+		}
 
-      if (employeeData.endDate && employeeData.startDate > employeeData.endDate) {
-        throw new Error('End date must be after start date');
-      }
+		Object.assign(employee, updates);
 
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
+		await employee.save();
 
-      const user = await db.User.create({ ...userData, password: hashedPassword }, { transaction: t });
+		return { employee };
+	}
 
-      const { password: userPassword, ...userWithoutPassword } = user.get({ plain: true });
+	public async deleteEmployee(employeeId: string) {
+		const employee = await db.Employee.findOne({ where: { id: employeeId } });
 
-      const existingEmployee = await db.Employee.findAll(
-        {
-          where: { userId: user.id },
-        },
-        { transaction: t }
-      );
+		if (!employee) {
+			throw new Error('Employee not found');
+		}
 
-      if (existingEmployee.length > 0) {
-        throw new Error('User already associated with an team member');
-      }
+		await employee.destroy();
 
-      if (!user) {
-        throw new Error('Error creating user');
-      }
-
-      const employee = await db.Employee.create(
-        { ...employeeData, userId: user.id, createdBy: currentUserId },
-        { transaction: t }
-      );
-
-      const newEmployee = await db.Employee.findOne(
-        {
-          where: { id: employee.id },
-          include: [
-            {
-              model: db.Department,
-              as: 'department',
-            },
-          ],
-        },
-        { transaction: t }
-      );
-
-      await t.commit();
-      return { user: userWithoutPassword, employee: newEmployee };
-    } catch (error) {
-      await t.rollback();
-      throw error;
-    }
-  }
-
-  public async getEmployees(params: IQueryParams) {
-    const { filter, sort, page, pageSize, fields } = params;
-
-    let whereClause = filter || {};
-    let orderClause: [string, string][] = [];
-    let limit = pageSize;
-    let offset = page && pageSize ? (page - 1) * pageSize : 0;
-    let attributes: string[] | undefined = fields;
-
-    if (sort) {
-      const [field, order] = sort.split(',');
-      orderClause.push([field, order.toUpperCase()]);
-    }
-
-    const employees = await db.Employee.findAll({
-      where: whereClause,
-      order: orderClause,
-      limit,
-      offset,
-      attributes,
-      include: [
-        {
-          model: db.Department,
-          as: 'department',
-        },
-      ],
-    });
-
-    const total = await db.Employee.count({
-      where: whereClause,
-    });
-
-    const pages = limit ? Math.ceil(total / limit) : 0;
-
-    return { employees, total, pages };
-  }
-
-  public async getEmployee(employeeId: string) {
-    const employee = await db.Employee.findOne({
-      where: { id: employeeId },
-      include: [
-        {
-          model: db.Department,
-          as: 'department',
-        },
-      ],
-    });
-
-    if (!employee) {
-      throw new Error('Employee not found');
-    }
-
-    return employee;
-  }
-
-  public async updateEmployee(employeeId: string, updates: Partial<IUser>) {
-    const restrictedFields = ['id', 'createdAt', 'createdBy', 'userId'];
-
-    for (const field of restrictedFields) {
-      if (updates[field as keyof IUser] !== undefined) {
-        throw new Error(`Field '${field}' cannot be updated`);
-      }
-    }
-
-    const employee = await db.Employee.findOne({ where: { id: employeeId } });
-
-    if (!employee) {
-      throw new Error('Employee not found');
-    }
-
-    Object.assign(employee, updates);
-
-    await employee.save();
-
-    return { employee };
-  }
-
-  public async deleteEmployee(employeeId: string) {
-    const employee = await db.Employee.findOne({ where: { id: employeeId } });
-
-    if (!employee) {
-      throw new Error('Employee not found');
-    }
-
-    await employee.destroy();
-
-    return;
-  }
+		return;
+	}
 }

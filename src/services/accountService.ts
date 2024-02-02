@@ -1,46 +1,88 @@
 import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { IAccount } from '../interfaces';
+import { IAccount, IEmployee } from '../interfaces';
 import db from '../models';
+import { EmployeeService } from './employeeService';
 
 export class AccountService {
-	public async createAccount(accountData: IAccount) {
-		const existingAccount = await db.Account.findOne({
-			where: { username: accountData.username },
-		});
+	private EmployeeService: EmployeeService;
 
-		if (existingAccount) {
-			throw new Error('Username already exists');
-		}
+	constructor() {
+		this.EmployeeService = new EmployeeService();
+	}
 
-		if (!accountData.username || !accountData.password) {
-			throw new Error('Username and password are required');
-		}
+	public async createAccount(accountData: IAccount, employeeData?: IEmployee) {
+		const txn = await db.sequelize.transaction();
 
-		let account;
+		console.log('accountData', accountData);
 
-		if (accountData.accountType === 'employee' || accountData.accountType === 'admin') {
-			throw new Error('Account type not supported');
+		console.log('employeeData', employeeData);
 
-			// create employee within a txn with account
-		} else if (accountData.accountType === 'developer' || accountData.accountType === 'display') {
+		try {
+			const existingAccount = await db.Account.findOne(
+				{ where: { username: accountData.username } },
+				{ transaction: txn }
+			);
+
+			if (existingAccount) {
+				throw new Error('Username already exists');
+			}
+
+			if (!accountData.username || !accountData.password) {
+				throw new Error('Username and password are required');
+			}
+
+			let account;
+			let employee;
+
 			const hashedPassword = await bcrypt.hash(accountData.password, 10);
 
-			account = await db.Account.create({
-				username: accountData.username,
-				password: hashedPassword,
-				accountType: accountData.accountType,
-				isActive: true,
-			});
-		} else {
-			throw new Error('Invalid account type');
-		}
+			if (accountData.accountType === 'employee' || accountData.accountType === 'admin') {
+				account = await db.Account.create(
+					{
+						username: accountData.username,
+						password: hashedPassword,
+						accountType: accountData.accountType,
+						isActive: true,
+					},
+					{ transaction: txn }
+				);
 
-		if (!account) {
-			throw new Error('Account could not be created');
-		}
+				if (employeeData && this.EmployeeService) {
+					employee = await this.EmployeeService.createEmployee(employeeData, account.id, txn);
+				} else {
+					throw new Error('Employee data is missing or EmployeeService is not accessible');
+				}
+			} else if (accountData.accountType === 'developer' || accountData.accountType === 'display') {
+				account = await db.Account.create(
+					{
+						username: accountData.username,
+						password: hashedPassword,
+						accountType: accountData.accountType,
+						isActive: true,
+					},
+					{ transaction: txn }
+				);
+			} else {
+				throw new Error('Invalid account type');
+			}
 
-		return account;
+			if (!account) {
+				throw new Error('Account could not be created');
+			}
+
+			await txn.commit();
+
+			if (employee) {
+				return { account, employee };
+			} else {
+				return { account };
+			}
+		} catch (error) {
+			await txn.rollback();
+
+			throw error;
+		}
 	}
 
 	public async getAccounts() {

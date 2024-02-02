@@ -5,11 +5,11 @@ import { AccountService } from '../services/accountService';
 export class AccountController {
 	public async createAccount(req: Request, res: Response) {
 		try {
-			const accountData = req.body;
+			const { account: accountData, employee: employeeData } = req.body;
 
 			const accountService = new AccountService();
 
-			const response = await accountService.createAccount(accountData);
+			const response = await accountService.createAccount(accountData, employeeData);
 
 			res.status(201).json(response);
 		} catch (error: unknown) {

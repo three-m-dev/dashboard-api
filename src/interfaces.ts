@@ -23,20 +23,18 @@ export interface IEmployee {
 	accountId: string;
 	firstName: string;
 	lastName: string;
-	email: string;
-	phone: string;
-	addressId: string;
-	birthDate: Date;
+	email?: string;
+	phone?: string;
+	addressId?: string;
+	birthDate?: Date;
 	company: Enumerator;
-	departmentId: string;
+	department: Enumerator;
 	directReportId: string;
 	title: string;
 	status: Enumerator;
 	startDate: Date;
 	endDate?: Date;
 	notes?: string;
-	createdBy: string;
-	updatedBy?: string;
 }
 
 export interface IPermission {
