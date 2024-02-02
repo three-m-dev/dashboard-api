@@ -1,5 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { IAccount } from '../shared/types';
+import { IAccount } from '../interfaces';
 
 export class Account extends Model<IAccount> implements IAccount {
 	public id!: string;
