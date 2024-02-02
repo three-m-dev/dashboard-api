@@ -8,14 +8,15 @@ import cors from 'cors';
 import logger from './utils/logger';
 import db from './models/index';
 
+import accountRoutes from './routes/accountRoutes';
 import applicantRoutes from './routes/applicantRoutes';
 import applicationRoutes from './routes/applicationRoutes';
 import departmentRoutes from './routes/departmentRoutes';
-import downtimeRoutes from './routes/downtimeRoutes';
-import employeeRoutes from './routes/employeeRoutes';
-import jobRoutes from './routes/jobRoutes';
-import productionLogRoutes from './routes/productionLogRoutes';
-import userRoutes from './routes/userRoutes';
+// import downtimeRoutes from './routes/downtimeRoutes';
+// import employeeRoutes from './routes/employeeRoutes';
+// import jobRoutes from './routes/jobRoutes';
+// import productionLogRoutes from './routes/productionLogRoutes';
+// import userRoutes from './routes/userRoutes';
 
 import { FileWatchService } from './services/fileWatchService';
 
@@ -68,14 +69,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
+app.use('/api/v1/accounts', accountRoutes);
 app.use('/api/v1/applicants', applicantRoutes);
 app.use('/api/v1/applications', applicationRoutes);
 app.use('/api/v1/departments', departmentRoutes);
-app.use('/api/v1/downtime', downtimeRoutes);
-app.use('/api/v1/employees', employeeRoutes);
-app.use('/api/v1/jobs', jobRoutes);
-app.use('/api/v1/production', productionLogRoutes);
-app.use('/api/v1/users', userRoutes);
+// app.use('/api/v1/downtime', downtimeRoutes);
+// app.use('/api/v1/employees', employeeRoutes);
+// app.use('/api/v1/jobs', jobRoutes);
+// app.use('/api/v1/production', productionLogRoutes);
+// app.use('/api/v1/users', userRoutes);
 
 const server = http.createServer(app);
 

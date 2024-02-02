@@ -34,7 +34,6 @@ export class ProductionLogService {
 		let offset = page && pageSize ? (page - 1) * pageSize : 0;
 		let attributes: string[] | undefined = fields;
 
-		// Fetch logs first without order
 		let productionLogs = await db.ProductionLog.findAll({
 			where: whereClause,
 			limit,
@@ -42,11 +41,9 @@ export class ProductionLogService {
 			attributes,
 		});
 
-		// Sort logs by 'weekOf' if no sort parameter is provided
 		if (!sort) {
 			productionLogs.sort((a: any, b: any) => new Date(a.weekOf).getTime() - new Date(b.weekOf).getTime());
 		} else {
-			// Custom sort logic if sort parameter is provided
 			const [field, order] = sort.split(',');
 			productionLogs.sort((a: any, b: any) => {
 				if (order.toUpperCase() === 'ASC') {

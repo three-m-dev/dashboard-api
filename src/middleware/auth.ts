@@ -4,7 +4,7 @@ import asyncHandler from 'express-async-handler';
 import { Request, Response, NextFunction } from 'express';
 
 interface ExtendedRequest extends Request {
-	user?: typeof db.User;
+	account?: typeof db.Account;
 }
 
 const protect = asyncHandler(async (req: ExtendedRequest, res: Response, next: NextFunction) => {
@@ -12,13 +12,13 @@ const protect = asyncHandler(async (req: ExtendedRequest, res: Response, next: N
 		try {
 			const token = req.cookies.token;
 
-			const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload & { userId: string };
+			const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload & { accountId: string };
 
-			if (!decoded.userId) {
+			if (!decoded.accountId) {
 				throw new Error('Invalid token');
 			}
 
-			req.user = await db.User.findByPk(decoded.userId);
+			req.account = await db.Account.findByPk(decoded.accountId);
 
 			next();
 		} catch (error) {
