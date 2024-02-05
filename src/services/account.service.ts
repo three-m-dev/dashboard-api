@@ -11,7 +11,7 @@ export class AccountService {
     this.EmployeeService = new EmployeeService();
   }
 
-  public async createAccount(accountData: IAccount, employeeData?: IEmployee) {
+  public createAccount = async (accountData: IAccount, employeeData?: IEmployee) => {
     const txn = await db.sequelize.transaction();
 
     console.log('accountData', accountData);
@@ -83,9 +83,9 @@ export class AccountService {
 
       throw error;
     }
-  }
+  };
 
-  public async getAccounts(params: IQueryParams) {
+  public getAccounts = async (params: IQueryParams) => {
     const { filter, sort, page, pageSize, fields } = params;
 
     let whereClause = filter || {};
@@ -114,7 +114,7 @@ export class AccountService {
     const pages = limit ? Math.ceil(total / limit) : 0;
 
     return { accounts, total, pages };
-  }
+  };
 
   public async getAccount(accountId: string) {
     const account = await db.Account.findByPk(accountId);
@@ -126,11 +126,11 @@ export class AccountService {
     return account;
   }
 
-  public async updateAccount(accountId: string, accountData: IAccount) {}
+  public updateAccount = async (accountId: string, accountData: IAccount) => {};
 
-  public async deleteAccount(accountId: string) {}
+  public deleteAccount = async (accountId: string) => {};
 
-  public async login(username: string, password: string) {
+  public login = async (username: string, password: string) => {
     if (!username || !password) {
       throw new Error('Missing credentials');
     }
@@ -164,5 +164,5 @@ export class AccountService {
     } else {
       return { accessToken };
     }
-  }
+  };
 }

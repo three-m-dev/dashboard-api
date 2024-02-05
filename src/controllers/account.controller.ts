@@ -10,7 +10,7 @@ export class AccountController {
     this.accountService = new AccountService();
   }
 
-  public async createAccount(req: Request, res: Response) {
+  public createAccount = async (req: Request, res: Response) => {
     try {
       const { account: accountData, employee: employeeData } = req.body;
 
@@ -24,9 +24,9 @@ export class AccountController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async getAccounts(req: Request, res: Response) {
+  public getAccounts = async (req: Request, res: Response) => {
     try {
       const { filter, sort, page, pageSize, fields } = req.query;
 
@@ -53,9 +53,9 @@ export class AccountController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async getAccount(req: Request, res: Response) {
+  public getAccount = async (req: Request, res: Response) => {
     try {
       const accountId: string = req.params.accountId;
 
@@ -69,13 +69,13 @@ export class AccountController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async updateAccount(req: Request, res: Response) {}
+  public updateAccount = async (req: Request, res: Response) => {};
 
-  public async deleteAccount(req: Request, res: Response) {}
+  public deleteAccount = async (req: Request, res: Response) => {};
 
-  public async login(req: Request, res: Response) {
+  public login = async (req: Request, res: Response) => {
     try {
       const { username, password } = req.body;
 
@@ -95,9 +95,9 @@ export class AccountController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async logout(req: Request, res: Response) {
+  public logout = async (req: Request, res: Response) => {
     try {
       res.cookie('token', '', {
         httpOnly: true,
@@ -110,9 +110,9 @@ export class AccountController {
     } catch (error) {
       res.status(500).json({ message: 'An unexpected error occurred during logout' });
     }
-  }
+  };
 
-  public async session(req: ExtendedRequest, res: Response) {
+  public session = async (req: ExtendedRequest, res: Response) => {
     if (req.account) {
       const account = { ...req.account.get({ plain: true }) };
       delete account.password;
@@ -127,5 +127,5 @@ export class AccountController {
     } else {
       res.status(401).json({ authenticated: false, message: 'Not authenticated' });
     }
-  }
+  };
 }

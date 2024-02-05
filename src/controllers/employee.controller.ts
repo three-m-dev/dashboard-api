@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { EmployeeService } from '../services/employee.service';
-import { IQueryParams } from '../shared/interfaces';
+import { IQueryParams } from '../interfaces';
 
 export class EmployeeController {
   private employeeService: EmployeeService;
@@ -9,7 +9,7 @@ export class EmployeeController {
     this.employeeService = new EmployeeService();
   }
 
-  public async getEmployees(req: Request, res: Response) {
+  public getEmployees = async (req: Request, res: Response) => {
     try {
       const { filter, sort, page, pageSize, fields } = req.query;
 
@@ -36,9 +36,9 @@ export class EmployeeController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async getEmployee(req: Request, res: Response) {
+  public getEmployee = async (req: Request, res: Response) => {
     try {
       const employeeId: string = req.params.employeeId;
 
@@ -52,9 +52,9 @@ export class EmployeeController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async updateEmployee(req: Request, res: Response) {
+  public updateEmployee = async (req: Request, res: Response) => {
     try {
       const employeeId: string = req.params.employeeId;
 
@@ -68,9 +68,9 @@ export class EmployeeController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 
-  public async deleteEmployee(req: Request, res: Response) {
+  public deleteEmployee = async (req: Request, res: Response) => {
     try {
       const employeeId: string = req.params.employeeId;
 
@@ -84,5 +84,5 @@ export class EmployeeController {
         res.status(500).json({ message: 'An unexpected error occurred' });
       }
     }
-  }
+  };
 }

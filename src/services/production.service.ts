@@ -1,13 +1,53 @@
-import { IProductionLog } from '../interfaces';
+import { IProductionLog, IQueryParams } from '../interfaces';
+import db from '../models';
 
 export class ProductionService {
-  public async createProductionLog(productionLogData: IProductionLog, txn?: any) {}
+  public createProductionLog = async (productionLogData: IProductionLog, txn?: any) => {};
 
-  public async getProductionLogs() {}
+  public getProductionLogs = async (params: IQueryParams) => {
+    const { filter, sort, page, pageSize, fields } = params;
 
-  public async getProductionLog() {}
+    let whereClause = filter || {};
+    let orderClause: [string, string][] = [];
+    let limit = pageSize;
+    let offset = page && pageSize ? (page - 1) * pageSize : 0;
+    let attributes: string[] | undefined = fields;
 
-  public async updateProductionLog() {}
+    if (sort) {
+      const [field, order] = sort.split(',');
+      orderClause.push([field, order.toUpperCase()]);
+    }
 
-  public async deleteProductionLog() {}
+    const productionLogs = await db.ProductionLog.findAll({
+      where: whereClause,
+      order: orderClause,
+      limit,
+      offset,
+      attributes,
+    });
+
+    const total = await db.ProductionLog.count({
+      where: whereClause,
+    });
+
+    const pages = limit ? Math.ceil(total / limit) : 0;
+
+    return { productionLogs, total, pages };
+  };
+
+  public getProductionLog = async (productionLogId: string) => {
+    const productionLog = await db.ProductionLog.findOne({
+      where: { id: productionLogId },
+    });
+
+    if (!productionLog) {
+      throw new Error('Production log not found');
+    }
+
+    return productionLog;
+  };
+
+  public updateProductionLog = async () => {};
+
+  public deleteProductionLog = async () => {};
 }
