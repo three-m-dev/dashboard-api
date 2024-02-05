@@ -10,6 +10,7 @@ import db from './models/index';
 
 import accountRoutes from './routes/account.routes';
 import employeeRoutes from './routes/employee.routes';
+import productionRoutes from './routes/production.routes';
 
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';
@@ -18,37 +19,37 @@ const ENVIRONMENT = process.env.ENVIRONMENT || 'development';
 const app = express();
 
 const corsOptions = {
-	origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-		if (!origin) {
-			callback(null, true);
-		} else {
-			callback(null, true);
-		}
-	},
-	credentials: true,
-	optionsSuccessStatus: 200,
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 db.sequelize
-	.sync()
-	.then(() => {
-		logger.info(NAMESPACE, 'Database synchronized');
-	})
-	.catch((err: Error) => {
-		logger.error(NAMESPACE, 'Error synchronizing database', err);
-	});
+  .sync()
+  .then(() => {
+    logger.info(NAMESPACE, 'Database synchronized');
+  })
+  .catch((err: Error) => {
+    logger.error(NAMESPACE, 'Error synchronizing database', err);
+  });
 
 app.use((req, res, next) => {
-	logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+  logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
-	res.on('finish', () => {
-		logger.info(
-			NAMESPACE,
-			`METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`
-		);
-	});
+  res.on('finish', () => {
+    logger.info(
+      NAMESPACE,
+      `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`
+    );
+  });
 
-	next();
+  next();
 });
 
 app.use(compression());
@@ -60,9 +61,10 @@ app.use(express.static(__dirname + '/public'));
 
 app.use('/api/v1/accounts', accountRoutes);
 app.use('/api/v1/employees', employeeRoutes);
+app.use('/api/v1/production', productionRoutes);
 
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
-	console.log(`Server running in ${ENVIRONMENT} mode on port ${PORT}..`);
+  console.log(`Server running in ${ENVIRONMENT} mode on port ${PORT}..`);
 });
