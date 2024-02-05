@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AccountController } from '../controllers/accountController';
+import { AccountController } from '../controllers/account.controller';
 import { protect } from '../middleware/auth';
 
 const router = Router();

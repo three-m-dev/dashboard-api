@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { EmployeeController } from '../controllers/employeeController';
+import { EmployeeController } from '../controllers/employee.controller';
 import { protect } from '../middleware/auth';
 
 const router = Router();

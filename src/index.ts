@@ -8,8 +8,8 @@ import cors from 'cors';
 import logger from './utils/logger';
 import db from './models/index';
 
-import accountRoutes from './routes/accountRoutes';
-import employeeRoutes from './routes/employeeRoutes';
+import accountRoutes from './routes/account.routes';
+import employeeRoutes from './routes/employee.routes';
 
 const NAMESPACE = 'Server';
 const PORT = process.env.PORT || '8080';

@@ -1,7 +1,7 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { IEmployee } from '../interfaces';
 
-export class Employee extends Model<IEmployee> implements IEmployee {
+class Employee extends Model<IEmployee> implements IEmployee {
 	public id!: string;
 	public accountId!: string;
 	public firstName!: string;
