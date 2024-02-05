@@ -2,7 +2,34 @@ import { IProductionLog, IQueryParams } from '../interfaces';
 import db from '../models';
 
 export class ProductionService {
-  public createProductionLog = async (productionLogData: IProductionLog, txn?: any) => {};
+  public createProductionLog = async (productionLogData: IProductionLog, txn?: any) => {
+    const requiredFields = ['company', 'weekOf'];
+    const allowedCompanies = ['three-m', 'ultra-grip'];
+
+    for (const field of requiredFields) {
+      if (!productionLogData[field as keyof IProductionLog]) {
+        throw new Error(`${field} is required`);
+      }
+    }
+
+    if (!allowedCompanies.includes(productionLogData.company)) {
+      throw new Error(`Invalid company. Allowed values are ${allowedCompanies.join(', ')}`);
+    }
+
+    const existingProductionLog = await db.ProductionLog.findOne({
+      where: { company: productionLogData.company, weekOf: productionLogData.weekOf },
+    });
+
+    if (existingProductionLog) {
+      throw new Error(
+        `${productionLogData.company} production log already exists for the week of ${productionLogData.weekOf}`
+      );
+    }
+
+    const productionLog = await db.ProductionLog.create(productionLogData);
+
+    return productionLog;
+  };
 
   public getProductionLogs = async (params: IQueryParams) => {
     const { filter, sort, page, pageSize, fields } = params;

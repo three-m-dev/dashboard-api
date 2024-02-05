@@ -27,7 +27,7 @@ export interface IEmployee {
   phone?: string;
   addressId?: string;
   birthDate?: Date;
-  company: Enumerator;
+  company: string;
   department: Enumerator;
   directReportId: string;
   title: string;
