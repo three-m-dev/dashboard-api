@@ -9,6 +9,7 @@ import logger from './utils/logger';
 import db from './models/index';
 
 import accountRoutes from './routes/account.routes';
+import emailRoutes from './routes/email.routes';
 import employeeRoutes from './routes/employee.routes';
 import productionRoutes from './routes/production.routes';
 
@@ -60,6 +61,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 app.use('/api/v1/accounts', accountRoutes);
+app.use('/api/v1/email', emailRoutes);
 app.use('/api/v1/employees', employeeRoutes);
 app.use('/api/v1/production', productionRoutes);
 

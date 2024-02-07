@@ -37,7 +37,8 @@ class ProductionLog extends Model<IProductionLog> implements IProductionLog {
         },
       },
       {
-        tableName: 'productionLogs',
+        tableName: 'production_logs',
+        underscored: true,
         sequelize,
       }
     );

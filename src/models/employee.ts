@@ -7,7 +7,9 @@ class Employee extends Model<IEmployee> implements IEmployee {
   public firstName!: string;
   public lastName!: string;
   public email?: string;
-  public phone?: string;
+  public cellPhone?: string;
+  public officePhone?: string;
+  public extension?: string;
   public addressId?: string;
   public birthDate?: Date;
   public company!: string;
@@ -44,7 +46,15 @@ class Employee extends Model<IEmployee> implements IEmployee {
           type: DataTypes.STRING,
           allowNull: true,
         },
-        phone: {
+        cellPhone: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        officePhone: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        extension: {
           type: DataTypes.STRING,
           allowNull: true,
         },
@@ -118,6 +128,7 @@ class Employee extends Model<IEmployee> implements IEmployee {
       },
       {
         tableName: 'employees',
+        underscored: true,
         sequelize,
       }
     );

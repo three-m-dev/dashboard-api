@@ -24,7 +24,9 @@ export interface IEmployee {
   firstName: string;
   lastName: string;
   email?: string;
-  phone?: string;
+  cellPhone?: string;
+  officePhone?: string;
+  extension?: string;
   addressId?: string;
   birthDate?: Date;
   company: string;
@@ -63,4 +65,12 @@ export interface IProductionLog {
     [property: string]: number;
   };
   notes?: string;
+}
+
+export interface IDocument {
+  id: string;
+  ownerId?: string;
+  ownerType: string;
+  documentType: string;
+  s3URL: string;
 }

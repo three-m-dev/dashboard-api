@@ -52,6 +52,7 @@ class Account extends Model<IAccount> implements IAccount {
       },
       {
         tableName: 'accounts',
+        underscored: true,
         sequelize,
       }
     );
