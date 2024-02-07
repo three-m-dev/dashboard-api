@@ -70,7 +70,37 @@ export class ProductionController {
     }
   };
 
-  public updateProductionLog = async (req: Request, res: Response) => {};
+  public updateProductionLog = async (req: Request, res: Response) => {
+    try {
+      const productionLogId: string = req.params.productionLogId;
 
-  public deleteProductionLog = async (req: Request, res: Response) => {};
+      const updates = req.body;
+
+      const response = await this.productionService.updateProductionLog(productionLogId, updates);
+
+      res.status(200).json(response);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'An unexpected error occurred' });
+      }
+    }
+  };
+
+  public deleteProductionLog = async (req: Request, res: Response) => {
+    try {
+      const productionLogId: string = req.params.productionLogId;
+
+      const response = await this.productionService.deleteProductionLog(productionLogId);
+
+      res.status(200).json(response);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'An unexpected error occurred' });
+      }
+    }
+  };
 }
