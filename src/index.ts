@@ -19,15 +19,9 @@ const ENVIRONMENT = process.env.ENVIRONMENT || 'development';
 const app = express();
 
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin) {
-      callback(null, true);
-    } else {
-      callback(null, true);
-    }
-  },
-  credentials: true,
+  origin: 'https://dev-three-m-dashboard.vercel.app/*' || 'https://three-m-dashboard.vercel.app/*',
   optionsSuccessStatus: 200,
+  credentials: true,
 };
 
 db.sequelize
