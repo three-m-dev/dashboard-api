@@ -88,3 +88,10 @@ export interface IApplicant {
   s3URL: string;
   questionAnswers: string[];
 }
+
+export interface IBlog {
+  id: string;
+  title: string;
+  author: string;
+  content: string[];
+}

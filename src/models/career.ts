@@ -70,7 +70,7 @@ class Career extends Model<ICareer> implements ICareer {
           allowNull: false,
         },
         positionsOpen: {
-          type: DataTypes.NUMBER,
+          type: DataTypes.INTEGER,
           allowNull: false,
         },
       },
