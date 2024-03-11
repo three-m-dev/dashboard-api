@@ -45,8 +45,6 @@ export interface IPermission {
   accessEmployees: boolean;
   accessCareers: boolean;
   accessContent: boolean;
-  accessDevelopment: boolean;
-  accessProduction: boolean;
 }
 
 export interface IQueryParams {
@@ -57,20 +55,36 @@ export interface IQueryParams {
   fields?: string[];
 }
 
-export interface IProductionLog {
-  id: string;
-  company: string;
-  weekOf: string;
-  properties: {
-    [property: string]: number;
-  };
-  notes?: string;
-}
-
 export interface IDocument {
   id: string;
   ownerId?: string;
   ownerType: string;
   documentType: string;
   s3URL: string;
+}
+
+export interface ICareer {
+  id: string;
+  company: string;
+  title: string;
+  location: string;
+  employmentType: string;
+  salary: string;
+  description: string;
+  benefits: string[];
+  qualifications: string[];
+  responsibilities: string[];
+  schedule: string[];
+  questions: string[];
+  positionsOpen: number;
+}
+
+export interface IApplicant {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  s3URL: string;
+  questionAnswers: string[];
 }
