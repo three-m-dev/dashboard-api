@@ -4,6 +4,7 @@ export { IApplicant } from '../interfaces';
 
 class Applicant extends Model<IApplicant> implements IApplicant {
   public id!: string;
+  public careerId?: string;
   public firstName!: string;
   public lastName!: string;
   public email!: string;
@@ -19,6 +20,10 @@ class Applicant extends Model<IApplicant> implements IApplicant {
           defaultValue: DataTypes.UUIDV4,
           allowNull: false,
           primaryKey: true,
+        },
+        careerId: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         firstName: {
           type: DataTypes.STRING,

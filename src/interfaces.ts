@@ -81,6 +81,7 @@ export interface ICareer {
 
 export interface IApplicant {
   id: string;
+  careerId?: string;
   firstName: string;
   lastName: string;
   email: string;
